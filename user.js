@@ -96,7 +96,7 @@
                 "BRAKE...OPEN",
                 "ENGINES...CLOSE",
                 "DOORS...OPEN",
-                "DO YOU HAVE A NICE FLIGHT....YES!"
+                "DO YOU HAVE A NICE FLIGHT...YES!"
             ]
         }
     ];
