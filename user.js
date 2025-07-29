@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         GeoFS MCDU V1 Call + CHECKLIST Pages
+// @name         GeoFS MCDU V1 Call + CHECKLIST Pages (with next page title & page number)
 // @namespace    http://tampermonkey.net/
-// @version      1.3
-// @description  V1音频自动播报+CHECKLIST十页翻页+交互
+// @version      1.4
+// @description  V1音频自动播报+CHECKLIST十页翻页+交互+右下角显示下个子页标题和页数
 // @match        https://www.geo-fs.com/*
 // @grant        none
 // ==/UserScript==
@@ -10,97 +10,28 @@
 (function () {
     'use strict';
 
-    // 1. V1音频自动播报（仅一次）
+    // V1音频播报相关
     let v1Value = null, v1Played = false;
     let v1Audio = null;
-
-    // Github音频直链
     const V1_AUDIO_URL = "https://raw.githubusercontent.com/Bilibilizm/GeoFS-zms-fans-addon/main/material/V1.WAV";
-
     function playV1Audio() {
         if (!v1Audio) v1Audio = new Audio(V1_AUDIO_URL);
         v1Audio.play();
     }
 
-    // 2. 检查单内容
+    // 检查单内容
     const checklistPages = [
-        {
-            title: "PREF",
-            items: [
-                "FLIGHT PLAN...IMPORT",
-                "ALTITUDE/SPEED...INPUT"
-            ]
-        },
-        {
-            title: "BEFORE LAUNCH",
-            items: [
-                "BRAKE...UP",
-                "DOORS...CLOSE"
-            ]
-        },
-        {
-            title: "AFTER LAUNCH",
-            items: [
-                "BRAKE...UP"
-            ]
-        },
-        {
-            title: "BEFORE TAXI/TAKE OFF",
-            items: [
-                "ENGINES...ON",
-                "FLAPS...DOWN",
-                "STABILIZER TRIM...ON DEMAND",
-                "BRAKE...UP"
-            ]
-        },
-        {
-            title: "AFTER TAKE OFF",
-            items: [
-                "GEAR...UP",
-                "FLAPS...RETRACT",
-                "AUTOPILOT...ON"
-            ]
-        },
-        {
-            title: "CRUISE",
-            items: [
-                "AUTOPILOT DATA...CHECK",
-                "FMC DATA PANEL...CHECK"
-            ]
-        },
-        {
-            title: "BEFORE DESCEND",
-            items: [
-                "FMC DATA PANEL...CHECK"
-            ]
-        },
-        {
-            title: "APPROACH",
-            items: [
-                "FLAPS...DOWN",
-                "GEAR...DOWN",
-                "SPOILER...READY"
-            ]
-        },
-        {
-            title: "AFTER LANDING",
-            items: [
-                "REVERSE THRUST...OFF",
-                "FLAPS...RETRACT",
-                "SPOILER...OFF"
-            ]
-        },
-        {
-            title: "AIRCRAFT SHUTDOWN",
-            items: [
-                "BRAKE...OPEN",
-                "ENGINES...CLOSE",
-                "DOORS...OPEN",
-                "DO YOU HAVE A NICE FLIGHT...YES!"
-            ]
-        }
+        { title: "PREF", items: ["FLIGHT PLAN...IMPORT", "ALTITUDE/SPEED...INPUT"] },
+        { title: "BEFORE LAUNCH", items: ["BRAKE...UP", "DOORS...CLOSE"] },
+        { title: "AFTER LAUNCH", items: ["BRAKE...UP"] },
+        { title: "BEFORE TAXI/TAKE OFF", items: ["ENGINES...ON", "FLAPS...DOWN", "STABILIZER TRIM...ON DEMAND", "BRAKE...UP"] },
+        { title: "AFTER TAKE OFF", items: ["GEAR...UP", "FLAPS...RETRACT", "AUTOPILOT...ON"] },
+        { title: "CRUISE", items: ["AUTOPILOT DATA...CHECK", "FMC DATA PANEL...CHECK"] },
+        { title: "BEFORE DESCEND", items: ["FMC DATA PANEL...CHECK"] },
+        { title: "APPROACH", items: ["FLAPS...DOWN", "GEAR...DOWN", "SPOILER...READY"] },
+        { title: "AFTER LANDING", items: ["REVERSE THRUST...OFF", "FLAPS...RETRACT", "SPOILER...OFF"] },
+        { title: "AIRCRAFT SHUTDOWN", items: ["BRAKE...OPEN", "ENGINES...CLOSE", "DOORS...OPEN", "DO YOU HAVE A NICE FLIGHT....YES!"] }
     ];
-
     let checklistState = Array(checklistPages.length).fill().map((_, pageIdx) => checklistPages[pageIdx].items.map(() => false));
     let currentChecklistPage = 0;
 
@@ -293,7 +224,6 @@
     let departuresInfo = { RWY: '', SIDS: '' };
     let arrivalsInfo = { STAR: '', TRANS: '', ILSRWY: '' };
 
-    // ----- 渲染 -----
     function getGeoFSFlightData() {
         if (!(window.geofs && geofs.animation && geofs.animation.values)) return {
             altitude: '-----',
@@ -311,16 +241,14 @@
     }
 
     function renderPage() {
-        // MENU
         if (currentSection === 'menu') {
             screenMain.innerHTML = `<div style='text-align:center;color:white;font-weight:bold;margin-bottom:10px'>GEOFS MCDU</div>
             <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
             <div style='text-align:center;color:cyan'>thank you for using it!</div>
             <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
-            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.3</span></div>
+            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.4</span></div>
             <div style='text-align:center'><a href='https://discord.gg/4snrKwHpAA' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a></div>`;
         }
-        // INIT
         else if (currentSection === 'INIT') {
             screenMain.innerHTML = `<div style='text-align:center;color:white'>INIT A</div>
             <div data-field='coRte'><span style='color:white'>CO RTE</span> <span style='color:orange'>${initFields.coRte}</span></div>
@@ -331,7 +259,6 @@
             <div data-field='crzFl'><span style='color:white'>CRZ FL/TEMP</span> <span style='color:${initFields.crzFl.includes('-') ? 'orange' : 'cyan'}'>${initFields.crzFl}</span></div>
             <div style='text-align:right;color:white'>INIT PAGE</div>`;
         }
-        // PERF
         else if (currentSection === 'PREF') {
             const title = perfPages[currentPerfPage];
             screenMain.innerHTML = `<div style='text-align:center;color:white;font-weight:bold;'>${title}</div>`;
@@ -344,14 +271,17 @@
                     <div data-field='TRANSALT'><span style='color:white'>TRANS ALT</span> <span style='color:${data.TRANSALT.includes('[') ? 'lightblue' : 'cyan'}'>${data.TRANSALT}</span></div>
                     <div data-field='FLAPS'><span style='color:white'>FLAPS</span> <span style='color:${data.FLAPS === 'ERROR' ? 'red' : (data.FLAPS.includes('[') ? 'lightblue' : 'cyan')}'>${data.FLAPS}</span></div>
                     <div data-field='TOTEMP'><span style='color:white'>TO TEMP</span> <span style='color:${data.TOTEMP === '---°' ? 'lightblue' : (data.TOTEMP === 'ERROR' ? 'red' : 'cyan')}'>${data.TOTEMP}</span></div>
-                    <div style='text-align:right;color:white'>${title} PAGE</div>`;
+                `;
             } else {
                 screenMain.innerHTML += `
                     <div style="margin-top:35px;text-align:center;color:#55aaff;font-size:18px;">${title} PAGE</div>
                 `;
             }
+            // 页数显示
+            screenMain.innerHTML += `<div style="text-align:right;color:#00FF00;font-size:14px;">
+                ${currentPerfPage+1}/4
+            </div>`;
         }
-        // PROG
         else if (currentSection === 'PROG') {
             const d = getGeoFSFlightData();
             screenMain.innerHTML = `
@@ -371,7 +301,6 @@
                 <div style="text-align:right;color:white">PROG PAGE</div>
             `;
         }
-        // F-PLN
         else if (currentSection === 'F-PLN') {
             const ftFilled = /^[A-Z]{4}\/[A-Z]{4}$/.test(initFields.fromTo);
             if (!ftFilled) {
@@ -398,7 +327,6 @@
                 screenMain.innerHTML += `<div style='text-align:right;color:#00FF00'>↑↓</div>`;
             }
         }
-        // departure/arrival
         else if (currentSection === 'departure') {
             const title = subPageAirport ? subPageAirport : '----';
             screenMain.innerHTML = `
@@ -428,15 +356,12 @@
                 <button class='mcdu-return' id='mcdu-return-arr'>&lt;RETURN</button>
             `;
         }
-        // DIR页面
         else if (currentSection === 'DIR') {
             screenMain.innerHTML = `<div style="text-align:center;color:yellow;font-weight:bold;font-size:22px;margin-top:55px;">THIS FEATURE IS IN DEVELOPMENT</div>`;
         }
-        // DIM BRT、DATA页面
         else if (currentSection === 'DIM BRT' || currentSection === 'DATA') {
             screenMain.innerHTML = `<div style='text-align:center;color:yellow;font-weight:bold;font-size:24px;margin-top:50px;'>PAGE NOT IMPLEMENTED</div>`;
         }
-        // Simplified pages: RAD NAV, SEC F-PLN, ATC COMM, FUFL PRED
         else if (
             currentSection === 'RAD\nNAV' ||
             currentSection === 'SEC\nF-PLN' ||
@@ -447,7 +372,6 @@
         }
         // CHECKLIST
         else if (currentSection === 'CHECK\nLIST') {
-            // checklistPages[currentChecklistPage]
             const page = checklistPages[currentChecklistPage];
             screenMain.innerHTML = `<div class="mcdu-checklist-title">${page.title}</div>`;
             page.items.forEach((item, idx) => {
@@ -460,8 +384,12 @@
                     </div>
                 `;
             });
-            screenMain.innerHTML += `<div style="text-align:right;color:#00FF00;font-size:14px;">${currentChecklistPage+1}/10 ←→</div>`;
-            // 添加交互
+            const nextPage = (currentChecklistPage + 1) % checklistPages.length;
+            const nextTitle = checklistPages[nextPage].title.toUpperCase();
+            screenMain.innerHTML += `<div style="text-align:right;color:#00FF00;font-size:14px;">
+                ${currentChecklistPage+1}/10 → ${nextTitle}
+            </div>`;
+            // 交互
             Array.from(screenMain.querySelectorAll('.mcdu-checklist-item')).forEach(el => {
                 el.onmouseenter = () => { el.style.cursor = 'pointer'; };
                 el.onclick = () => {
@@ -632,13 +560,11 @@
                         else if (/^-\d+$/.test(inputBuffer)) inputBuffer = inputBuffer.slice(1);
                     }
                     else if (label === "←") {
-                        // PREF页面左右键
                         if (currentSection === 'PREF') {
                             currentPerfPage = (currentPerfPage + perfPages.length - 1) % perfPages.length;
                             renderPage();
                             return;
                         }
-                        // CHECKLIST页面左右键
                         if (currentSection === 'CHECK\nLIST') {
                             currentChecklistPage = (currentChecklistPage + checklistPages.length - 1) % checklistPages.length;
                             renderPage();
@@ -683,10 +609,7 @@
 
     // --- 监控V1速度触发音频 ---
     setInterval(() => {
-        // PROG页面刷新
         if (currentSection === 'PROG') renderPage();
-
-        // V1音频监控
         if (v1Value && !v1Played && window.geofs && geofs.animation && geofs.animation.values) {
             const speed = geofs.animation.values.groundSpeedKnt;
             if (speed >= v1Value) {
