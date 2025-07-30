@@ -94,7 +94,7 @@ Used to set initial flight information:
 
 ### PROG Page
 
-<img width="934" height="314" alt="49 S$X7MOA{)KA46KR}I${U" src="https://github.com/user-attachments/assets/a5e5f890-f445-457f-abfa-99cf6aa937fc" />
+<img width="640" height="234" alt="image" src="https://github.com/user-attachments/assets/c69f4efe-1c64-4383-806f-95a23e41a298" />
 
 
 
