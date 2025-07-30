@@ -191,7 +191,7 @@ Interactive checklist system (10 phases):
 
 1. V1 callout will automatically play when aircraft reaches V1 knots
 2. Some features are still under development (marked in interface)
-3. For best experience, complete INIT page before F-PLN
+3. For best experience, complete INIT page and import routes before F-PLN
 4. Performance calculations are estimates only
 5. Join our [Discord group](https://discord.gg/4snrKwHpAA) for support
 
