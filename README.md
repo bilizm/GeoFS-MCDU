@@ -39,7 +39,7 @@ Use the virtual keyboard to fill in the information in the input box in the lowe
 
 ## Basic Operations
 
-- **Open/Close MCDU**: Click the "MCDU" button in the bottom-right corner of the GeoFS interface, or press the "M" key
+- **Open/Close MCDU**: Click the "MCDU" button in the bottom-right corner of the GeoFS interface.
 - **Enter Data**: Use the keyboard buttons below the screen
 - **Clear Input**: Use the "CLR" button
 - **Delete Characters**: Use the "DEL" button
@@ -182,8 +182,9 @@ Interactive checklist system (10 phases):
 2. Some features are still under development (marked in interface)
 3. For best experience, complete INIT page before F-PLN
 4. Performance calculations are estimates only
-5. Join our [Discord group](https://discord.gg/4snrKwHpAA) for support
-6. To enter a negative number: First enter the number in the input box, then click the +/- key to make it negative. (For example, to enter -5, first click 5 and then click +/-. Click +/-again to make it 5)
+5.To enter a negative number: First enter the number in the input box, then click the +/- key to make it negative. (For example, to enter -5, first click 5 and then click +/-. Click +/-again to make it 5)
+6. Join our [Discord group](https://discord.gg/4snrKwHpAA) for support
+
 
 ---
 
