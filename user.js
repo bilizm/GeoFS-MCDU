@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  Please read the instructions on GitHub before use.
 // @author       zm
 // @LICENSE      MIT
@@ -43,7 +43,7 @@
     let currentChecklistPage = 0;
 
     // 状态
-    const sectionNames = ["INIT", "F-PLN", "PROG", "PREF", "DATA", "DIM BRT", "AIR PORT", "DIR", "RAD\nNAV", "SEC\nF-PLN", "FUFL\nPRED", "CHECK\nLIST", "MCDU\nMENU"];
+    const sectionNames = ["INIT", "F-PLN", "PROG", "PREF", "DATA", "DIM BRT", "AIR\nPORT", "DIR", "RAD\nNAV", "SEC\nF-PLN", "FUFL\nPRED", "CHECK\nLIST", "MCDU\nMENU"];
     let currentSection = 'menu';
     let inputBuffer = "";
     let showError = false;
@@ -152,7 +152,7 @@
             <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
             <div style='text-align:center;color:cyan'>thank you for using it!</div>
             <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
-            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1.2</span></div>
+            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1.3</span></div>
             <div style='text-align:center'><a href='https://discord.gg/4snrKwHpAA' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a></div>`;
         }
         else if (currentSection === 'INIT') {
@@ -296,13 +296,45 @@
         else if (currentSection === 'DIM BRT' || currentSection === 'DATA') {
             screenMain.innerHTML = `<div style='text-align:center;color:yellow;font-weight:bold;font-size:24px;margin-top:50px;'>PAGE NOT IMPLEMENTED</div>`;
         }
-        else if (
-            currentSection === 'RAD\nNAV' ||
-            currentSection === 'SEC\nF-PLN' ||
-            currentSection === 'FUFL\nPRED'
-        ) {
-            screenMain.innerHTML = `<div style='text-align:center;color:yellow;font-weight:bold;font-size:24px;margin-top:50px;'>PAGE NOT IMPLEMENTED</div>`;
+        else if (currentSection === 'RAD\nNAV') {
+            if (window.radNavTimer) {
+                clearInterval(window.radNavTimer);
+                window.radNavTimer = null;
+            }
+
+            function renderRadNav() {
+                const navFreqEl = document.querySelector("input[name='NAVFrequency']");
+                const navFreq = navFreqEl?.value || "N/V";
+                const isValidFreq = /^\d{3}\.\d{2}$/.test(navFreq) && parseFloat(navFreq) >= 108.0 && parseFloat(navFreq) <= 117.95;
+
+                screenMain.innerHTML = `
+                    <div style='text-align:center;color:white;font-weight:bold;'>RAD NAV</div>
+                    <div style='color:white;'>
+                        VOR1: <span style='color:${isValidFreq ? "cyan" : "orange"}'>${isValidFreq ? navFreq + "/------" : "N/V"}</span>
+                    </div>
+                    <div style='color:white;'>
+                        VOR2: <span style='color:${isValidFreq ? "cyan" : "orange"}'>${isValidFreq ? "AUTO" : "N/V"}</span>
+                    </div>
+                    <div style='color:white;'>
+                        ILS:  <span style='color:${isValidFreq ? "cyan" : "orange"}'>${isValidFreq ? "N/V" : "N/V"}</span>
+                    </div>
+                    <div style='text-align:right;color:white'>RAD NAV PAGE</div>
+                `;
+            }
+
+    renderRadNav();
+
+    window.radNavTimer = setInterval(() => {
+        if (currentSection === 'RAD\nNAV') {
+            renderRadNav();
+        } else {
+            clearInterval(window.radNavTimer);
+            window.radNavTimer = null;
         }
+    }, 1000);
+}
+
+
         // CHECKLIST
         else if (currentSection === 'CHECK\nLIST') {
             const page = checklistPages[currentChecklistPage];
@@ -616,7 +648,7 @@
                             if (label === 'CHECK\nLIST') currentChecklistPage = 0;
                         }
 
-                        else inputBuffer += label.replace("\n", "");
+                        else if (!sectionNames.includes(label)) inputBuffer += label.replace("\n", "");
                         mcduRenderPage(screenMain, screenInput);
                     };
                 }
