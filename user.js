@@ -546,7 +546,7 @@
         const layout = [
             ["DIR", "PROG", "PREF", "INIT", "DATA", "DIM BRT", "", ""],
             ["F-PLN", "RAD\nNAV", "FUFL\nPRED", "SEC\nF-PLN", "CHECK\nLIST", "MCDU\nMENU", "", ""],
-            ["AIR PORT", "", "", "", "", "", "", ""],
+            ["AIR\nPORT", "", "", "", "", "", "", ""],
             ["←", "↑", "A", "B", "C", "D", "E", ""],
             ["→", "↓", "F", "G", "H", "I", "J", ""],
             ["1", "2", "3", "K", "L", "M", "N", "O"],
