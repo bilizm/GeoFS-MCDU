@@ -81,8 +81,8 @@ Used to manage flight plan waypoints:
 3. **Delete Waypoints**:
    - Press "DEL" to remove the last waypoint
 4. **Airport Subpages**:
-   - **Departure Page**: Set runway (RWY) and SID procedures
-   - **Arrival Page**: Set STAR procedures, transitions, and ILS runway
+   - **Departure Page**: Click on the ICAO green code of your departure airport, Set runway (RWY) and SID procedures
+   - **Arrival Page**: Click on the ICAO green code of the arrival airport, Set STAR procedures, transitions, and ILS runway
 
 ### PROG Page
 
@@ -142,6 +142,8 @@ Performance calculation pages (use "←" and "→" to switch):
 - **APPR SPEED**: Approach speed (3-digit number)
 
 ### CHECKLIST Page
+
+**You can find out what to do at each stage of the flight here!**
 
 <img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/3007e52a-46bf-4554-85c8-73dbd3a88356" />
 
