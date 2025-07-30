@@ -72,7 +72,7 @@ Used to set initial flight information:
 
 ### F-PLN Page
 
-1. **Flight waypoint display**:After you import routes into GeoFS FlightPlan, this page will display all the routes you imported.And there are a maximum of 5 waypoints on a page, and you can switch between them by clicking the ↑ and ↓ keys.
+1. **Flight waypoint display**:After you import routes into GeoFS FlightPlan, this page will display all the routes you imported.And there are a maximum of 5 waypoints on a page, and you can switch between them by clicking the ↑ and ↓ keys.You do not need to perform any action on this page.
 
 **You must enter the FROM/TO part in the INIT page and import the route in GeoFS FlightPlan to see all the waypoints!**
 
