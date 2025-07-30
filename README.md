@@ -110,7 +110,7 @@ Performance calculation pages (use "←" and "→" to switch):
 
 - **V1/VR/V2**: Takeoff speeds (3-digit numbers)
 - **TRANS ALT**: Transition altitude (4-digit number)
-- **FLAPS**: Flap setting (Airbus 1~4 or Boeing 1~40, if the aircraft is a Boeing, enter the flap degrees directly without the symbols!)
+- **FLAPS**: Flap setting (Airbus 1-4 or Boeing 1-40, if the aircraft is a Boeing, enter the flap degrees directly without the symbols!)
 - **TO TEMP**: Takeoff temperature (number with optional "-")
 
 #### CLB Page
