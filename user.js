@@ -96,7 +96,7 @@
     fplnWaypoints = routeNodes.map(el => {
         let lat = parseFloat(el.parentElement?.dataset?.lat);
         let lon = parseFloat(el.parentElement?.dataset?.lon);
-        let name = el.textContent.trim().toUpperCase();
+        let name = el.textContent.trim().toUpperCase().replace(/[0-9\.\,\s-]+$/, '');
 
         if ((isNaN(lat) || isNaN(lon)) && window.geofs?.nav?.flightPlan) {
             const match = geofs.nav.flightPlan.find(p => p.ident === name);
@@ -107,10 +107,11 @@
         }
 
         return {
-            name,
+            name: name, 
             lat: isNaN(lat) ? null : lat,
             lon: isNaN(lon) ? null : lon
         };
+
     }).filter(el => el.name && el.name !== "---");
 }
 
@@ -249,14 +250,9 @@
                     const wp = fplnWaypoints[i];
                     screenMain.innerHTML +=
                         `<div class='mcdu-wpt' data-wpt='${i}'>
-                            <span style='color:lightblue'>${i + 1}. ${wp.name}</span>&nbsp;&nbsp;
-                            <span style='color:lightblue'>${
-                              (wp.lat != null && wp.lon != null) 
-                                ? `${wp.lat.toFixed(2)} ${wp.lon.toFixed(2)}`
-                                : ''
-                            }</span>
+                   <span style='color:lightblue'>${i + 1}. ${wp.name}</span>
+                       </div>`;
 
-                        </div>`;
                 }
 
                 screenMain.innerHTML += `<div style='text-align:center;color:#888'> </div>`;
@@ -295,7 +291,7 @@
             `;
         }
         else if (currentSection === 'DIR') {
-            screenMain.innerHTML = `<div style="text-align:center;color:yellow;font-weight:bold;font-size:22px;margin-top:55px;">THIS FEATURE IS IN DEVELOPMENT</div>`;
+            screenMain.innerHTML = `<div style="text-align:center;color:yellow;font-weight:bold;font-size:22px;margin-top:55px;">PLEASE USE FLIGHT PLAN FOR DIRECT FLIGHT</div>`;
         }
         else if (currentSection === 'DIM BRT' || currentSection === 'DATA') {
             screenMain.innerHTML = `<div style='text-align:center;color:yellow;font-weight:bold;font-size:24px;margin-top:50px;'>PAGE NOT IMPLEMENTED</div>`;
