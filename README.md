@@ -45,7 +45,7 @@ Use the virtual keyboard to fill in the information in the input box in the lowe
 - **Delete Characters**: Use the "DEL" button
 - **Switch Pages**: Use the top function buttons (INIT, F-PLN, PROG, etc.)
 - **To enter a negative number**: First enter the number in the input box, then click the +/- key to make it negative. (For example, to enter -5, first click 5 and then click +/-. Click +/-again to make it 5)
-- **Webs**: I recommend using [SimBrief](https://dispatch.simbrief.com/home) or [Flight Planner](https://flightplandatabase.com/planner)
+- **Flight Planning Websites**: I recommend using [SimBrief](https://dispatch.simbrief.com/home) or [Flight Planner](https://flightplandatabase.com/planner)
 
 ## Page Functions Explained
 
