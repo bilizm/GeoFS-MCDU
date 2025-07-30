@@ -181,7 +181,6 @@ Interactive checklist system (10 phases):
 ### Other Pages
 
 - **AIR PORT**: Airport information (under development)
-- **DIR**: Direct-to function (under development)
 - **RAD NAV**: Radio navigation (not implemented)
 - **SEC F-PLN**: Secondary flight plan (not implemented)
 - **FUEL PRED**: Fuel prediction (not implemented)
