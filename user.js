@@ -1,8 +1,10 @@
 // ==UserScript==
-// @name         GeoFS MCDU V1 Call + CHECKLIST Pages (with next page title & page number)
+// @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
-// @version      1.4
-// @description  V1音频自动播报+CHECKLIST十页翻页+交互+右下角显示下个子页标题和页数
+// @version      0.1
+// @description  Please read the instructions on GitHub before use.
+// @author       zm
+// @LICENSE      MIT
 // @match        https://www.geo-fs.com/*
 // @grant        none
 // ==/UserScript==
@@ -10,6 +12,11 @@
 (function () {
     'use strict';
 
+    // ------------------------------- MCDU状态变量 -------------------------------
+    let mcduPanelOpen = false;
+    let mcduPanel = null;
+
+    // ------------------------------- MCDU页面与功能原始代码 -------------------------------
     // V1音频播报相关
     let v1Value = null, v1Played = false;
     let v1Audio = null;
@@ -21,178 +28,22 @@
 
     // 检查单内容
     const checklistPages = [
-        { title: "PREF", items: ["FLIGHT PLAN...IMPORT", "ALTITUDE/SPEED...INPUT"] },
+        { title: "PREF", items: ["FLIGHT PLAN...IMPORT", "ALTITUDE/SPEED...INPUT", "PERF-TAKE OFF...IMPORT", "PERF-CLB...IMPORT"] },
         { title: "BEFORE LAUNCH", items: ["BRAKE...UP", "DOORS...CLOSE"] },
         { title: "AFTER LAUNCH", items: ["BRAKE...UP"] },
         { title: "BEFORE TAXI/TAKE OFF", items: ["ENGINES...ON", "FLAPS...DOWN", "STABILIZER TRIM...ON DEMAND", "BRAKE...UP"] },
         { title: "AFTER TAKE OFF", items: ["GEAR...UP", "FLAPS...RETRACT", "AUTOPILOT...ON"] },
         { title: "CRUISE", items: ["AUTOPILOT DATA...CHECK", "FMC DATA PANEL...CHECK"] },
-        { title: "BEFORE DESCEND", items: ["FMC DATA PANEL...CHECK"] },
-        { title: "APPROACH", items: ["FLAPS...DOWN", "GEAR...DOWN", "SPOILER...READY"] },
+        { title: "BEFORE DESCEND", items: ["FMC DATA PANEL...CHECK", "PERF-DES...IMPORT"] },
+        { title: "APPROACH", items: ["FLAPS...DOWN", "GEAR...DOWN", "SPOILER...READY", "PERF-APPR...IMPORT"] },
         { title: "AFTER LANDING", items: ["REVERSE THRUST...OFF", "FLAPS...RETRACT", "SPOILER...OFF"] },
-        { title: "AIRCRAFT SHUTDOWN", items: ["BRAKE...OPEN", "ENGINES...CLOSE", "DOORS...OPEN", "DO YOU HAVE A NICE FLIGHT....YES!"] }
+        { title: "AIRCRAFT SHUTDOWN", items: ["BRAKE...OPEN", "ENGINES...CLOSE", "DOORS...OPEN", "DO YOU HAVE A NICE FLIGHT...YES!"] }
     ];
     let checklistState = Array(checklistPages.length).fill().map((_, pageIdx) => checklistPages[pageIdx].items.map(() => false));
     let currentChecklistPage = 0;
 
-    // ----- DOM & STYLE -----
-    const mcdu = document.createElement('div');
-    mcdu.id = 'mcdu-panel';
-    document.body.appendChild(mcdu);
-
-    const style = document.createElement('style');
-    style.textContent = `
-        #mcdu-panel {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #333;
-            color: white;
-            font-family: monospace;
-            border: 2px solid #444;
-            z-index: 9999;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px #000;
-            user-select: none;
-            transform: scale(0.75);
-            transform-origin: bottom right;
-        }
-        .mcdu-screen {
-            background: black;
-            height: 170px;
-            margin-bottom: 10px;
-            padding: 10px 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            font-size: 14px;
-            color: white;
-            position: relative;
-        }
-        .mcdu-grid {
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-gap: 5px;
-        }
-        .mcdu-btn {
-            height: 42px;
-            background: #555;
-            border: 1px solid #888;
-            border-radius: 5px;
-            color: white;
-            font-size: 15px;
-            font-family: system-ui, Arial, sans-serif !important;
-            white-space: pre-line;
-            text-align: center;
-            cursor: pointer;
-            transition: background 0.1s;
-        }
-        .mcdu-btn:active {
-            background: #777;
-        }
-        .mcdu-btn.blank {
-            background: transparent;
-            border: none;
-            cursor: default;
-        }
-        .mcdu-code {
-            text-decoration: underline;
-            color: #00FF00;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .mcdu-code:hover, .mcdu-return:hover {
-            color: #FFD700;
-            cursor: pointer;
-        }
-        .mcdu-return {
-            color: white;
-            text-align: left;
-            font-weight: bold;
-            cursor: pointer;
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            background: none;
-            border: none;
-            font-size: 15px;
-            padding-left: 10px;
-            padding-bottom: 5px;
-            z-index: 2;
-        }
-        .mcdu-wpt {
-            cursor: pointer;
-        }
-        .mcdu-wpt-empty {
-            color: #888;
-        }
-        .mcdu-checklist-title {
-            color: white;
-            text-align: center;
-            font-weight: bold;
-            font-size: 17px;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-        .mcdu-checklist-item {
-            display: flex;
-            align-items: center;
-            color: white;
-            font-size: 16px;
-            margin: 3px 0;
-            cursor: pointer;
-            letter-spacing: 2px;
-            font-family: monospace;
-        }
-        .mcdu-checklist-item:hover {
-            cursor: pointer;
-            background: #444;
-        }
-        .mcdu-checklist-box {
-            width: 23px;
-            height: 23px;
-            border: 2px solid #aaa;
-            background: #222;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 10px;
-            border-radius: 5px;
-            font-size: 20px;
-            color: #00FF00;
-            transition: background 0.15s;
-        }
-        .mcdu-checklist-box.checked {
-            background: #333;
-            border-color: #00FF00;
-        }
-        .mcdu-checklist-box > .mcdu-checkmark {
-            font-size: 19px;
-            color: #00FF00;
-            font-weight: bold;
-        }
-    `;
-    document.head.appendChild(style);
-
-    // ----- UI -----
-    const screen = document.createElement('div');
-    screen.className = 'mcdu-screen';
-
-    const screenMain = document.createElement('div');
-    screenMain.id = 'mcdu-display-main';
-
-    const screenInput = document.createElement('div');
-    screenInput.id = 'mcdu-display-input';
-    screenInput.style.color = 'cyan';
-    screenInput.style.height = '18px';
-
-    screen.appendChild(screenMain);
-    screen.appendChild(screenInput);
-    mcdu.appendChild(screen);
-
     // 状态
-    const sectionNames = ["INIT", "F-PLN", "PROG", "PREF", "DATA", "DIR", "RAD\nNAV", "SEC\nF-PLN", "FUFL\nPRED", "ATC\nCOMM", "CHECK\nLIST", "DIM BRT"];
+    const sectionNames = ["INIT", "F-PLN", "PROG", "PREF", "DATA", "DIM BRT", "AIR PORT", "DIR", "RAD\nNAV", "SEC\nF-PLN", "FUFL\nPRED", "CHECK\nLIST", "MCDU\nMENU"];
     let currentSection = 'menu';
     let inputBuffer = "";
     let showError = false;
@@ -211,7 +62,28 @@
     // PERF
     const perfPages = ['TAKE OFF', 'CLB', 'CRZ', 'DES'];
     const perfData = {
-        'TAKE OFF': { V1: '[][][]', VR: '[][][]', V2: '[][][]', TRANSALT: '[    ]', FLAPS: '[     ]', TOTEMP: '---°' }
+        'TAKE OFF': { V1: '[][][]', VR: '[][][]', V2: '[][][]', TRANSALT: '[    ]', FLAPS: '[     ]', TOTEMP: '---°' },
+        'CLB': {
+            COSTINDEX: '---',
+            CLBWIND: '---/--',
+            TRIPWIND: '---/--',
+            ECONCLBSPD: '---',
+            STEPALTS: '-----/-----'
+        },
+        'CRZ': {
+            CRZFL: 'FL---',
+            OPTFL: 'FL---',
+            ECONCRZSPD: '--',
+            WIND: '---/--',
+            TDPRED: '----'
+        },
+        'DES': {
+            DESWIND: '---/--',
+            ECONDESSPD: '---/--',
+            MANDESSPD: '---/----',
+            DECELPT: '---/--NM',
+            APPRSPD: '---'
+        }
     };
 
     // F-PLN
@@ -240,13 +112,22 @@
         };
     }
 
-    function renderPage() {
+    function renderPerfFooter() {
+        // 动态显示左/右页面名和页码
+        let nextIdx = (currentPerfPage + 1) % perfPages.length;
+        let lastIdx = (currentPerfPage + perfPages.length - 1) % perfPages.length;
+        return `<span style="color:#00FF00;">←${perfPages[lastIdx]}</span>
+        <span style="margin:0 10px;color:#00FF00;">${currentPerfPage+1}/4</span>
+        <span style="color:#00FF00;">${perfPages[nextIdx]}→</span>`;
+    }
+
+    function mcduRenderPage(screenMain, screenInput) {
         if (currentSection === 'menu') {
             screenMain.innerHTML = `<div style='text-align:center;color:white;font-weight:bold;margin-bottom:10px'>GEOFS MCDU</div>
             <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
             <div style='text-align:center;color:cyan'>thank you for using it!</div>
             <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
-            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.4</span></div>
+            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1</span></div>
             <div style='text-align:center'><a href='https://discord.gg/4snrKwHpAA' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a></div>`;
         }
         else if (currentSection === 'INIT') {
@@ -259,28 +140,52 @@
             <div data-field='crzFl'><span style='color:white'>CRZ FL/TEMP</span> <span style='color:${initFields.crzFl.includes('-') ? 'orange' : 'cyan'}'>${initFields.crzFl}</span></div>
             <div style='text-align:right;color:white'>INIT PAGE</div>`;
         }
+        else if (currentSection === 'AIR PORT') {
+            screenMain.innerHTML = `<div style="text-align:center;color:yellow;font-weight:bold;font-size:22px;margin-top:55px;">AIR PORT PAGE<br>TO BE DEVELOPED</div>`;
+        }
         else if (currentSection === 'PREF') {
             const title = perfPages[currentPerfPage];
             screenMain.innerHTML = `<div style='text-align:center;color:white;font-weight:bold;'>${title}</div>`;
+            const lightblue = "lightblue";
             if (title === 'TAKE OFF') {
                 const data = perfData['TAKE OFF'];
                 screenMain.innerHTML += `
                     <div data-field='V1'><span style='color:white'>V1</span> <span style='color:${data.V1.includes('[') ? 'orange' : 'cyan'}'>${data.V1}</span></div>
                     <div data-field='VR'><span style='color:white'>VR</span> <span style='color:${data.VR.includes('[') ? 'orange' : 'cyan'}'>${data.VR}</span></div>
                     <div data-field='V2'><span style='color:white'>V2</span> <span style='color:${data.V2.includes('[') ? 'orange' : 'cyan'}'>${data.V2}</span></div>
-                    <div data-field='TRANSALT'><span style='color:white'>TRANS ALT</span> <span style='color:${data.TRANSALT.includes('[') ? 'lightblue' : 'cyan'}'>${data.TRANSALT}</span></div>
-                    <div data-field='FLAPS'><span style='color:white'>FLAPS</span> <span style='color:${data.FLAPS === 'ERROR' ? 'red' : (data.FLAPS.includes('[') ? 'lightblue' : 'cyan')}'>${data.FLAPS}</span></div>
-                    <div data-field='TOTEMP'><span style='color:white'>TO TEMP</span> <span style='color:${data.TOTEMP === '---°' ? 'lightblue' : (data.TOTEMP === 'ERROR' ? 'red' : 'cyan')}'>${data.TOTEMP}</span></div>
+                    <div data-field='TRANSALT'><span style='color:white'>TRANS ALT</span> <span style='color:${data.TRANSALT.includes('[') ? lightblue : 'cyan'}'>${data.TRANSALT}</span></div>
+                    <div data-field='FLAPS'><span style='color:white'>FLAPS</span> <span style='color:${data.FLAPS === 'ERROR' ? 'red' : (data.FLAPS.includes('[') ? lightblue : 'cyan')}'>${data.FLAPS}</span></div>
+                    <div data-field='TOTEMP'><span style='color:white'>TO TEMP</span> <span style='color:${data.TOTEMP === '---°' ? lightblue : (data.TOTEMP === 'ERROR' ? 'red' : 'cyan')}'>${data.TOTEMP}</span></div>
                 `;
-            } else {
+            } else if (title === 'CLB') {
+                const data = perfData['CLB'];
                 screenMain.innerHTML += `
-                    <div style="margin-top:35px;text-align:center;color:#55aaff;font-size:18px;">${title} PAGE</div>
+                    <div data-field='COSTINDEX'><span style='color:white'>COST INDEX</span> <span style='color:${data.COSTINDEX==='---'?lightblue:lightblue}'>${data.COSTINDEX}</span></div>
+                    <div data-field='CLBWIND'><span style='color:white'>CLB WIND</span> <span style='color:${data.CLBWIND==='---/--'?lightblue:lightblue}'>${data.CLBWIND}</span></div>
+                    <div data-field='TRIPWIND'><span style='color:white'>TRIP WIND</span> <span style='color:${data.TRIPWIND==='---/--'?lightblue:lightblue}'>${data.TRIPWIND}</span></div>
+                    <div data-field='ECONCLBSPD'><span style='color:white'>ECON CLB SPD</span> <span style='color:${data.ECONCLBSPD==='---'?lightblue:lightblue}'>${data.ECONCLBSPD}</span></div>
+                    <div data-field='STEPALTS'><span style='color:white'>STEP ALTS</span> <span style='color:${data.STEPALTS==='-----/-----'?lightblue:lightblue}'>${data.STEPALTS}</span></div>
+                `;
+            } else if (title === 'CRZ') {
+                const data = perfData['CRZ'];
+                screenMain.innerHTML += `
+                    <div data-field='CRZFL'><span style='color:white'>CRZ FL</span> <span style='color:${data.CRZFL==='FL---'?lightblue:lightblue}'>${data.CRZFL}</span></div>
+                    <div data-field='OPTFL'><span style='color:white'>OPT FL</span> <span style='color:${data.OPTFL==='FL---'?lightblue:lightblue}'>${data.OPTFL}</span></div>
+                    <div data-field='ECONCRZSPD'><span style='color:white'>ECON CRZ SPD</span> <span style='color:${data.ECONCRZSPD==='--'?lightblue:lightblue}'>${data.ECONCRZSPD}</span></div>
+                    <div data-field='WIND'><span style='color:white'>WIND</span> <span style='color:${data.WIND==='---/--'?lightblue:lightblue}'>${data.WIND}</span></div>
+                    <div data-field='TDPRED'><span style='color:white'>T/D PRED</span> <span style='color:${data.TDPRED==='----'?lightblue:lightblue}'>${data.TDPRED}</span></div>
+                `;
+            } else if (title === 'DES') {
+                const data = perfData['DES'];
+                screenMain.innerHTML += `
+                    <div data-field='DESWIND'><span style='color:white'>DES WIND</span> <span style='color:${data.DESWIND==='---/--'?lightblue:lightblue}'>${data.DESWIND}</span></div>
+                    <div data-field='ECONDESSPD'><span style='color:white'>ECON DES SPD</span> <span style='color:${data.ECONDESSPD==='---/--'?lightblue:lightblue}'>${data.ECONDESSPD}</span></div>
+                    <div data-field='MANDESSPD'><span style='color:white'>MAN DES SPD</span> <span style='color:${data.MANDESSPD==='---/----'?lightblue:lightblue}'>${data.MANDESSPD}</span></div>
+                    <div data-field='DECELPT'><span style='color:white'>DECEL PT</span> <span style='color:${data.DECELPT==='---/--NM'?lightblue:lightblue}'>${data.DECELPT}</span></div>
+                    <div data-field='APPRSPD'><span style='color:white'>APPR SPEED</span> <span style='color:${data.APPRSPD==='---'?lightblue:lightblue}'>${data.APPRSPD}</span></div>
                 `;
             }
-            // 页数显示
-            screenMain.innerHTML += `<div style="text-align:right;color:#00FF00;font-size:14px;">
-                ${currentPerfPage+1}/4
-            </div>`;
+            screenMain.innerHTML += `<div class="mcdu-pref-footer">${renderPerfFooter()}</div>`;
         }
         else if (currentSection === 'PROG') {
             const d = getGeoFSFlightData();
@@ -365,7 +270,6 @@
         else if (
             currentSection === 'RAD\nNAV' ||
             currentSection === 'SEC\nF-PLN' ||
-            currentSection === 'ATC\nCOMM' ||
             currentSection === 'FUFL\nPRED'
         ) {
             screenMain.innerHTML = `<div style='text-align:center;color:yellow;font-weight:bold;font-size:24px;margin-top:50px;'>PAGE NOT IMPLEMENTED</div>`;
@@ -395,7 +299,7 @@
                 el.onclick = () => {
                     const idx = parseInt(el.getAttribute('data-idx'));
                     checklistState[currentChecklistPage][idx] = !checklistState[currentChecklistPage][idx];
-                    renderPage();
+                    mcduRenderPage(screenMain, screenInput);
                 };
             });
         }
@@ -409,14 +313,14 @@
                 document.getElementById('mcdu-dep').onclick = () => {
                     subPageAirport = initFields.fromTo.split('/')[0];
                     currentSection = 'departure';
-                    renderPage();
+                    mcduRenderPage(screenMain, screenInput);
                 };
             }
             if (document.getElementById('mcdu-arr')) {
                 document.getElementById('mcdu-arr').onclick = () => {
                     subPageAirport = initFields.fromTo.split('/')[1];
                     currentSection = 'arrival';
-                    renderPage();
+                    mcduRenderPage(screenMain, screenInput);
                 };
             }
             Array.from(screenMain.querySelectorAll('.mcdu-wpt-empty')).forEach(el => {
@@ -425,7 +329,7 @@
                     if (inputBuffer.trim() && /^[A-Z0-9]{2,8}$/.test(inputBuffer.trim().toUpperCase())) {
                         fplnWaypoints[idx] = { name: inputBuffer.trim().toUpperCase() };
                         inputBuffer = "";
-                        renderPage();
+                        mcduRenderPage(screenMain, screenInput);
                     }
                 };
             });
@@ -435,7 +339,7 @@
             if (document.getElementById('mcdu-return-dep')) {
                 document.getElementById('mcdu-return-dep').onclick = () => {
                     currentSection = 'F-PLN';
-                    renderPage();
+                    mcduRenderPage(screenMain, screenInput);
                 };
             }
         }
@@ -443,181 +347,479 @@
             if (document.getElementById('mcdu-return-arr')) {
                 document.getElementById('mcdu-return-arr').onclick = () => {
                     currentSection = 'F-PLN';
-                    renderPage();
+                    mcduRenderPage(screenMain, screenInput);
                 };
             }
         }
     }
 
-    // --- 字段点击录入 ---
-    screenMain.addEventListener("click", e => {
-        const field = e.target.closest("div")?.dataset?.field;
-        if (!field || !inputBuffer) return;
-        let value = inputBuffer.trim().toUpperCase();
-        showError = false;
+    function openMCDUPanel() {
+        if (mcduPanelOpen) return;
+        mcduPanelOpen = true;
 
-        // PERF TAKE OFF
-        if (currentSection === 'PREF' && perfPages[currentPerfPage] === 'TAKE OFF') {
-            const data = perfData['TAKE OFF'];
-            if (["V1", "VR", "V2"].includes(field)) {
-                if (/^\d{3}$/.test(value)) {
-                    data[field] = value;
-                    if (field === "V1") {
-                        v1Value = parseInt(value);
-                        v1Played = false;
-                    }
+        mcduPanel = document.createElement('div');
+        mcduPanel.id = 'mcdu-panel';
+        mcduPanel.style.zIndex = 100000;
+        document.body.appendChild(mcduPanel);
+
+        const style = document.createElement('style');
+        style.id = 'mcdu-panel-style';
+        style.textContent = `
+            #mcdu-panel {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: #333;
+                color: white;
+                font-family: monospace;
+                border: 2px solid #444;
+                z-index: 99999;
+                padding: 10px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px #000;
+                user-select: none;
+                transform: scale(0.75);
+                transform-origin: bottom right;
+            }
+            .mcdu-screen {
+                background: black;
+                height: 170px;
+                margin-bottom: 10px;
+                padding: 10px 20px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                font-size: 14px;
+                color: white;
+                position: relative;
+            }
+            .mcdu-grid {
+                display: grid;
+                grid-template-columns: repeat(8, 1fr);
+                grid-gap: 5px;
+            }
+            .mcdu-btn {
+                height: 42px;
+                background: #555;
+                border: 1px solid #888;
+                border-radius: 5px;
+                color: white;
+                font-size: 15px;
+                font-family: system-ui, Arial, sans-serif !important;
+                white-space: pre-line;
+                text-align: center;
+                cursor: pointer;
+                transition: background 0.1s;
+            }
+            .mcdu-btn:active {
+                background: #777;
+            }
+            .mcdu-btn.blank {
+                background: transparent;
+                border: none;
+                cursor: default;
+            }
+            .mcdu-code {
+                text-decoration: underline;
+                color: #00FF00;
+                cursor: pointer;
+                transition: color 0.2s;
+            }
+            .mcdu-code:hover, .mcdu-return:hover {
+                color: #FFD700;
+                cursor: pointer;
+            }
+            .mcdu-return {
+                color: white;
+                text-align: left;
+                font-weight: bold;
+                cursor: pointer;
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                background: none;
+                border: none;
+                font-size: 15px;
+                padding-left: 10px;
+                padding-bottom: 5px;
+                z-index: 2;
+            }
+            .mcdu-wpt {
+                cursor: pointer;
+            }
+            .mcdu-wpt-empty {
+                color: #888;
+            }
+            .mcdu-checklist-title {
+                color: white;
+                text-align: center;
+                font-weight: bold;
+                font-size: 17px;
+                letter-spacing: 2px;
+                margin-bottom: 5px;
+            }
+            .mcdu-checklist-item {
+                display: flex;
+                align-items: center;
+                color: white;
+                font-size: 16px;
+                margin: 3px 0;
+                cursor: pointer;
+                letter-spacing: 2px;
+                font-family: monospace;
+            }
+            .mcdu-checklist-item:hover {
+                cursor: pointer;
+                background: #444;
+            }
+            .mcdu-checklist-box {
+                width: 23px;
+                height: 23px;
+                border: 2px solid #aaa;
+                background: #222;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                margin-left: 10px;
+                border-radius: 5px;
+                font-size: 20px;
+                color: #00FF00;
+                transition: background 0.15s;
+            }
+            .mcdu-checklist-box.checked {
+                background: #333;
+                border-color: #00FF00;
+            }
+            .mcdu-checklist-box > .mcdu-checkmark {
+                font-size: 19px;
+                color: #00FF00;
+                font-weight: bold;
+            }
+            .mcdu-pref-footer {
+                position: absolute;
+                right: 10px;
+                bottom: 2px;
+                font-size: 13px;
+                color: #00FF00;
+                background: none;
+                text-align: right;
+                width: 92%;
+                z-index: 1;
+            }
+        `;
+        document.head.appendChild(style);
+
+        const screen = document.createElement('div');
+        screen.className = 'mcdu-screen';
+        const screenMain = document.createElement('div');
+        screenMain.id = 'mcdu-display-main';
+        const screenInput = document.createElement('div');
+        screenInput.id = 'mcdu-display-input';
+        screenInput.style.color = 'cyan';
+        screenInput.style.height = '18px';
+        screen.appendChild(screenMain);
+        screen.appendChild(screenInput);
+        mcduPanel.appendChild(screen);
+
+        const grid = document.createElement('div');
+        grid.className = 'mcdu-grid';
+        const layout = [
+            ["DIR", "PROG", "PREF", "INIT", "DATA", "DIM BRT", "", ""],
+            ["F-PLN", "RAD\nNAV", "FUFL\nPRED", "SEC\nF-PLN", "CHECK\nLIST", "MCDU\nMENU", "", ""],
+            ["AIR PORT", "", "", "", "", "", "", ""],
+            ["←", "↑", "A", "B", "C", "D", "E", ""],
+            ["→", "↓", "F", "G", "H", "I", "J", ""],
+            ["1", "2", "3", "K", "L", "M", "N", "O"],
+            ["4", "5", "6", "P", "Q", "R", "S", "T"],
+            ["7", "8", "9", "U", "V", "W", "X", "Y"],
+            [".", "0", "+/-", "Z", "SP", "DEL", "/", "CLR"]
+        ];
+        layout.forEach(row => {
+            row.forEach(label => {
+                const btn = document.createElement('div');
+                btn.className = 'mcdu-btn';
+                if (!label || label === "") btn.classList.add('blank');
+                else {
+                    btn.textContent = label;
+                    btn.onclick = () => {
+                        showError = false;
+                        if (label === "CLR") inputBuffer = "";
+                        else if (label === "DEL") {
+                            if (currentSection === 'F-PLN' && fplnWaypoints.length > 0) {
+                                fplnWaypoints.pop();
+                            }
+                            else inputBuffer = inputBuffer.slice(0, -1);
+                        }
+                        else if (label === "SP") inputBuffer += " ";
+                        else if (label === "+/-") {
+                            if (/^\d+$/.test(inputBuffer)) inputBuffer = '-' + inputBuffer;
+                            else if (/^-\d+$/.test(inputBuffer)) inputBuffer = inputBuffer.slice(1);
+                        }
+                        else if (label === "←") {
+                            if (currentSection === 'PREF') {
+                                currentPerfPage = (currentPerfPage + perfPages.length - 1) % perfPages.length;
+                                mcduRenderPage(screenMain, screenInput);
+                                return;
+                            }
+                            if (currentSection === 'CHECK\nLIST') {
+                                currentChecklistPage = (currentChecklistPage + checklistPages.length - 1) % checklistPages.length;
+                                mcduRenderPage(screenMain, screenInput);
+                                return;
+                            }
+                        } else if (label === "→") {
+                            if (currentSection === 'PREF') {
+                                currentPerfPage = (currentPerfPage + 1) % perfPages.length;
+                                mcduRenderPage(screenMain, screenInput);
+                                return;
+                            }
+                            if (currentSection === 'CHECK\nLIST') {
+                                currentChecklistPage = (currentChecklistPage + 1) % checklistPages.length;
+                                mcduRenderPage(screenMain, screenInput);
+                                return;
+                            }
+                        }
+                        else if (label === "↑") {
+                            if (currentSection === 'F-PLN') {
+                                fplnPageIdx = fplnPageIdx > 0 ? fplnPageIdx - 1 : 0;
+                            }
+                        } else if (label === "↓") {
+                            if (currentSection === 'F-PLN') {
+                                const maxIdx = Math.max(0, Math.ceil(fplnWaypoints.length / fplnPerPage) - 1);
+                                fplnPageIdx = fplnPageIdx < maxIdx ? fplnPageIdx + 1 : maxIdx;
+                            }
+                        }
+                        else if (label === "MCDU\nMENU") currentSection = 'menu';
+                        else if (sectionNames.includes(label)) {
+                            currentSection = label;
+                            if (label === 'F-PLN') fplnPageIdx = 0;
+                            if (label === 'CHECK\nLIST') currentChecklistPage = 0;
+                        }
+                        else inputBuffer += label.replace("\n", "");
+                        mcduRenderPage(screenMain, screenInput);
+                    };
                 }
-                else showError = true;
-            } else if (field === "TRANSALT") {
-                if (/^\d{4}$/.test(value)) data.TRANSALT = value;
-                else showError = true;
-            } else if (field === "FLAPS") {
-                const num = parseInt(value);
-                if (!isNaN(num)) {
-                    if (num >= 0 && num <= 4) data.FLAPS = `${num}`;
-                    else if (num > 4 && num <= 40) data.FLAPS = `${num}°`;
-                    else showError = true;
-                } else showError = true;
-            } else if (field === "TOTEMP") {
-                if (/^-?\d+$/.test(value)) data.TOTEMP = `${value}°`;
-                else data.TOTEMP = 'ERROR', showError = true;
-            }
-        }
-        // INIT
-        else if (currentSection === 'INIT') {
-            if (field === "fromTo" && /^[A-Z]{4}\/([A-Z]{4})$/.test(value)) initFields.fromTo = value;
-            else if (field === "fltNbr") initFields.fltNbr = value;
-            else if (field === "costIndex" && /^\d{1,3}$/.test(value)) initFields.costIndex = value;
-            else if (field === "crzFl" && /^FL\d{3}$/.test(value)) {
-                const fl = parseInt(value.slice(2));
-                const temp = Math.round(-0.002 * fl * 100 + 15);
-                initFields.crzFl = `${value}/${temp}°`;
-            } else if (field === "altn" && /^[A-Z]{4}$/.test(value)) initFields.altn = value;
-            else showError = true;
-        }
-        // Departure Subpage
-        else if (currentSection === 'departure') {
-            if (field === 'RWY') {
-                if (/^[A-Z0-9]{3}$/.test(value)) departuresInfo.RWY = value;
-                else showError = true;
-            } else if (field === 'SIDS') {
-                if (/^[A-Z0-9]{5,6}$/.test(value)) departuresInfo.SIDS = value;
-                else showError = true;
-            }
-        }
-        // Arrival Subpage
-        else if (currentSection === 'arrival') {
-            if (field === 'STAR') {
-                if (/^[A-Z0-9]{5,6}$/.test(value)) arrivalsInfo.STAR = value;
-                else showError = true;
-            } else if (field === 'TRANS') {
-                if (/^[A-Z0-9]{5,6}$/.test(value)) arrivalsInfo.TRANS = value;
-                else showError = true;
-            } else if (field === 'ILSRWY') {
-                if (/^[A-Z0-9]{3}$/.test(value)) arrivalsInfo.ILSRWY = value;
-                else showError = true;
-            }
-        }
-
-        inputBuffer = "";
-        renderPage();
-    });
-
-    // --- 按钮区 ---
-    const grid = document.createElement('div');
-    grid.className = 'mcdu-grid';
-    const layout = [
-        ["DIR", "PROG", "PREF", "INIT", "DATA", "DIM BRT", "", ""],
-        ["F-PLN", "RAD\nNAV", "FUFL\nPRED", "SEC\nF-PLN", "ATC\nCOMM", "CHECK\nLIST", "MCDU\nMENU", ""],
-        ["", "", "", "", "", "", "", ""],
-        ["←", "↑", "A", "B", "C", "D", "E", ""],
-        ["→", "↓", "F", "G", "H", "I", "J", ""],
-        ["1", "2", "3", "K", "L", "M", "N", "O"],
-        ["4", "5", "6", "P", "Q", "R", "S", "T"],
-        ["7", "8", "9", "U", "V", "W", "X", "Y"],
-        [".", "0", "+/-", "Z", "SP", "DEL", "/", "CLR"]
-    ];
-
-    layout.forEach(row => {
-        row.forEach(label => {
-            const btn = document.createElement('div');
-            btn.className = 'mcdu-btn';
-            if (!label || label === "") btn.classList.add('blank');
-            else {
-                btn.textContent = label;
-                btn.onclick = () => {
-                    showError = false;
-                    if (label === "CLR") inputBuffer = "";
-                    else if (label === "DEL") {
-                        if (currentSection === 'F-PLN' && fplnWaypoints.length > 0) {
-                            fplnWaypoints.pop();
-                        }
-                        else inputBuffer = inputBuffer.slice(0, -1);
-                    }
-                    else if (label === "SP") inputBuffer += " ";
-                    else if (label === "+/-") {
-                        if (/^\d+$/.test(inputBuffer)) inputBuffer = '-' + inputBuffer;
-                        else if (/^-\d+$/.test(inputBuffer)) inputBuffer = inputBuffer.slice(1);
-                    }
-                    else if (label === "←") {
-                        if (currentSection === 'PREF') {
-                            currentPerfPage = (currentPerfPage + perfPages.length - 1) % perfPages.length;
-                            renderPage();
-                            return;
-                        }
-                        if (currentSection === 'CHECK\nLIST') {
-                            currentChecklistPage = (currentChecklistPage + checklistPages.length - 1) % checklistPages.length;
-                            renderPage();
-                            return;
-                        }
-                    } else if (label === "→") {
-                        if (currentSection === 'PREF') {
-                            currentPerfPage = (currentPerfPage + 1) % perfPages.length;
-                            renderPage();
-                            return;
-                        }
-                        if (currentSection === 'CHECK\nLIST') {
-                            currentChecklistPage = (currentChecklistPage + 1) % checklistPages.length;
-                            renderPage();
-                            return;
-                        }
-                    }
-                    else if (label === "↑") {
-                        if (currentSection === 'F-PLN') {
-                            fplnPageIdx = fplnPageIdx > 0 ? fplnPageIdx - 1 : 0;
-                        }
-                    } else if (label === "↓") {
-                        if (currentSection === 'F-PLN') {
-                            const maxIdx = Math.max(0, Math.ceil(fplnWaypoints.length / fplnPerPage) - 1);
-                            fplnPageIdx = fplnPageIdx < maxIdx ? fplnPageIdx + 1 : maxIdx;
-                        }
-                    }
-                    else if (label === "MCDU\nMENU") currentSection = 'menu';
-                    else if (sectionNames.includes(label)) {
-                        currentSection = label;
-                        if (label === 'F-PLN') fplnPageIdx = 0;
-                        if (label === 'CHECK\nLIST') currentChecklistPage = 0;
-                    }
-                    else inputBuffer += label.replace("\n", "");
-                    renderPage();
-                };
-            }
-            grid.appendChild(btn);
+                grid.appendChild(btn);
+            });
         });
-    });
-    mcdu.appendChild(grid);
+        mcduPanel.appendChild(grid);
 
-    // --- 监控V1速度触发音频 ---
-    setInterval(() => {
-        if (currentSection === 'PROG') renderPage();
-        if (v1Value && !v1Played && window.geofs && geofs.animation && geofs.animation.values) {
-            const speed = geofs.animation.values.groundSpeedKnt;
-            if (speed >= v1Value) {
-                playV1Audio();
-                v1Played = true;
+        screenMain.addEventListener("click", e => {
+            const field = e.target.closest("div")?.dataset?.field;
+            if (!field || !inputBuffer) return;
+            let value = inputBuffer.trim().toUpperCase();
+            showError = false;
+            // PERF TAKE OFF
+            if (currentSection === 'PREF' && perfPages[currentPerfPage] === 'TAKE OFF') {
+                const data = perfData['TAKE OFF'];
+                if (["V1", "VR", "V2"].includes(field)) {
+                    if (/^\d{3}$/.test(value)) {
+                        data[field] = value;
+                        if (field === "V1") {
+                            v1Value = parseInt(value);
+                            v1Played = false;
+                        }
+                    }
+                    else showError = true;
+                } else if (field === "TRANSALT") {
+                    if (/^\d{4}$/.test(value)) data.TRANSALT = value;
+                    else showError = true;
+                } else if (field === "FLAPS") {
+                    const num = parseInt(value);
+                    if (!isNaN(num)) {
+                        if (num >= 0 && num <= 4) data.FLAPS = `${num}`;
+                        else if (num > 4 && num <= 40) data.FLAPS = `${num}°`;
+                        else showError = true;
+                    } else showError = true;
+                } else if (field === "TOTEMP") {
+                    if (/^-?\d+$/.test(value)) data.TOTEMP = `${value}°`;
+                    else data.TOTEMP = 'ERROR', showError = true;
+                }
+            }
+            // PERF CLB
+            else if (currentSection === 'PREF' && perfPages[currentPerfPage] === 'CLB') {
+                const data = perfData['CLB'];
+                if (field === "COSTINDEX") {
+                    if (/^\d{1,3}$/.test(value) && parseInt(value) <= 999) data.COSTINDEX = value;
+                    else showError = true;
+                } else if (field === "CLBWIND") {
+                    if (/^\d{3}\/\d{2}$/.test(value)) data.CLBWIND = value;
+                    else showError = true;
+                } else if (field === "TRIPWIND") {
+                    if (/^\d{3}\/\d{2}$/.test(value)) data.TRIPWIND = value;
+                    else showError = true;
+                } else if (field === "ECONCLBSPD") {
+                    if (/^\d{3}$/.test(value)) data.ECONCLBSPD = value;
+                    else showError = true;
+                } else if (field === "STEPALTS") {
+                    if (/^\d{5}\/\d{5}$/.test(value)) data.STEPALTS = value;
+                    else showError = true;
+                }
+            }
+            // PERF CRZ
+            else if (currentSection === 'PREF' && perfPages[currentPerfPage] === 'CRZ') {
+                const data = perfData['CRZ'];
+                if (field === "CRZFL") {
+                    if (/^\d{3}$/.test(value)) data.CRZFL = `FL${value}`;
+                    else showError = true;
+                } else if (field === "OPTFL") {
+                    if (/^\d{3}$/.test(value)) data.OPTFL = `FL${value}`;
+                    else showError = true;
+                } else if (field === "ECONCRZSPD") {
+                    if (/^\.\d{2}$/.test(inputBuffer)) data.ECONCRZSPD = value;
+                    else showError = true;
+                } else if (field === "WIND") {
+                    if (/^\d{3}\/\d{2}$/.test(value)) data.WIND = value;
+                    else showError = true;
+                } else if (field === "TDPRED") {
+                    if (/^\d{1,4}$/.test(value)) data.TDPRED = value;
+                    else showError = true;
+                }
+            }
+            // PERF DES
+            else if (currentSection === 'PREF' && perfPages[currentPerfPage] === 'DES') {
+                const data = perfData['DES'];
+                if (field === "DESWIND") {
+                    if (/^\d{3}\/\d{2}$/.test(value)) data.DESWIND = value;
+                    else showError = true;
+                } else if (field === "ECONDESSPD") {
+                    if (/^\d{3}$/.test(value)) {
+                        let spd = parseInt(value);
+                        let mach = Math.round((spd/950)*100)/100;
+                        let machStr = mach.toFixed(2).replace(/^0+/, '');
+                        data.ECONDESSPD = `${value}/${machStr}`;
+                    } else showError = true;
+                } else if (field === "MANDESSPD") {
+                    if (/^\d{3,4}$/.test(value)) {
+                        data.MANDESSPD = value.length === 3 ? `${value}/----` : `---/${value}`;
+                    } else if (/^\d{3}\/\d{4}$/.test(value) || /^\d{3}\/\d{3}$/.test(value)) {
+                        data.MANDESSPD = value;
+                    } else showError = true;
+                } else if (field === "DECELPT") {
+                    if (/^\d{3}\/\d{2}$/.test(value)) data.DECELPT = `${value}NM`;
+                    else showError = true;
+                } else if (field === "APPRSPD") {
+                    if (/^\d{3}$/.test(value)) data.APPRSPD = value;
+                    else showError = true;
+                }
+            }
+            // INIT
+            else if (currentSection === 'INIT') {
+                if (field === "fromTo" && /^[A-Z]{4}\/([A-Z]{4})$/.test(value)) initFields.fromTo = value;
+                else if (field === "fltNbr") initFields.fltNbr = value;
+                else if (field === "costIndex" && /^\d{1,3}$/.test(value)) initFields.costIndex = value;
+                else if (field === "crzFl" && /^FL\d{3}$/.test(value)) {
+                    const fl = parseInt(value.slice(2));
+                    const temp = Math.round(-0.002 * fl * 100 + 15);
+                    initFields.crzFl = `${value}/${temp}°`;
+                } else if (field === "altn" && /^[A-Z]{4}$/.test(value)) initFields.altn = value;
+                else showError = true;
+            }
+            // Departure Subpage
+            else if (currentSection === 'departure') {
+                if (field === 'RWY') {
+                    if (/^[A-Z0-9]{3}$/.test(value)) departuresInfo.RWY = value;
+                    else showError = true;
+                } else if (field === 'SIDS') {
+                    if (/^[A-Z0-9]{5,6}$/.test(value)) departuresInfo.SIDS = value;
+                    else showError = true;
+                }
+            }
+            // Arrival Subpage
+            else if (currentSection === 'arrival') {
+                if (field === 'STAR') {
+                    if (/^[A-Z0-9]{5,6}$/.test(value)) arrivalsInfo.STAR = value;
+                    else showError = true;
+                } else if (field === 'TRANS') {
+                    if (/^[A-Z0-9]{5,6}$/.test(value)) arrivalsInfo.TRANS = value;
+                    else showError = true;
+                } else if (field === 'ILSRWY') {
+                    if (/^[A-Z0-9]{3}$/.test(value)) arrivalsInfo.ILSRWY = value;
+                    else showError = true;
+                }
+            }
+            inputBuffer = "";
+            mcduRenderPage(screenMain, screenInput);
+        });
+
+        mcduPanel._v1timer = setInterval(() => {
+            if (currentSection === 'PROG') mcduRenderPage(screenMain, screenInput);
+            let v1ForSound = null;
+            let v1Raw = perfData['TAKE OFF']?.V1;
+            if (/^\d{3}$/.test(v1Raw)) v1ForSound = parseInt(v1Raw, 10);
+            if (v1ForSound && !v1Played && window.geofs && geofs.animation && geofs.animation.values) {
+                const speed = geofs.animation.values.groundSpeedKnt;
+                if (speed >= v1ForSound - 4) {
+                    playV1Audio();
+                    v1Played = true;
+                }
+            }
+        }, 500);
+
+        mcduRenderPage(screenMain, screenInput);
+    }
+
+    function closeMCDUPanel() {
+        if (!mcduPanelOpen) return;
+        mcduPanelOpen = false;
+        if (mcduPanel) {
+            if (mcduPanel._v1timer) clearInterval(mcduPanel._v1timer);
+            mcduPanel.remove();
+            mcduPanel = null;
+        }
+        const styleEl = document.getElementById('mcdu-panel-style');
+        if (styleEl) styleEl.remove();
+    }
+
+    // -------------------- 工具栏按钮 ---------------------
+    function addMCDUToolbarButton() {
+        if (document.getElementById("mcdu-toolbar-button")) return;
+        let buttonDiv = document.createElement("div");
+        buttonDiv.innerHTML = `<button class="mdl-button mdl-js-button geofs-f-standard-ui geofs-mediumScreenOnly" 
+            data-toggle-panel=".geofs-livery-list" 
+            data-tooltip-classname="mdl-tooltip--top" 
+            tabindex="0" 
+            id="mcdu-toolbar-button" 
+            size="50%">MCDU</button>`;
+        let inserted = false;
+        let bottomUI;
+        let retryCount = 0;
+        function tryInsert() {
+            bottomUI = document.getElementsByClassName("geofs-ui-bottom")[0];
+            if (bottomUI) {
+                let element = buttonDiv.firstElementChild;
+                if (typeof geofs !== "undefined" && geofs.version >= 3.6) {
+                    bottomUI.insertBefore(element, bottomUI.children[5] || null);
+                } else {
+                    bottomUI.insertBefore(element, bottomUI.children[4] || null);
+                }
+                element.onclick = function() {
+                    if (mcduPanelOpen) closeMCDUPanel();
+                    else openMCDUPanel();
+                };
+                inserted = true;
+            } else if (retryCount < 30) {
+                retryCount++;
+                setTimeout(tryInsert, 300);
             }
         }
-    }, 1000);
+        tryInsert();
+    }
 
-    renderPage();
+    function ready(fn) {
+        if (document.readyState !== 'loading') fn();
+        else document.addEventListener('DOMContentLoaded', fn);
+    }
+    ready(() => {
+        addMCDUToolbarButton();
+    });
+    setTimeout(addMCDUToolbarButton, 3000);
+
+    document.addEventListener("keydown", function (e) {
+        if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
+        if (e.key.toLowerCase() === "m") {
+            e.preventDefault();
+            if (mcduPanelOpen) closeMCDUPanel();
+            else openMCDUPanel();
+        }
+    }, true);
 })();
