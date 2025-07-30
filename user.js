@@ -150,7 +150,7 @@
         if (currentSection === 'menu') {
             screenMain.innerHTML = `<div style='text-align:center;color:white;font-weight:bold;margin-bottom:10px'>GEOFS MCDU</div>
             <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
-            <div style='text-align:center;color:cyan'>thank you for using it!</div>
+            <div style='text-align:center;color:cyan'>Thank you for using it!</div>
             <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
             <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1.3</span></div>
             <div style='text-align:center'><a href='https://discord.gg/4snrKwHpAA' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a></div>`;
