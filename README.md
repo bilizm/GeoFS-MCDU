@@ -17,7 +17,8 @@
 
 The GeoFS MCDU plugin is a multifunctional Control Display Unit (MCDU) simulator designed for the GeoFS flight simulator. It provides flight plan management, performance calculations, checklists, and other features, compatible with all aircraft in GeoFS.
 
-![MCDU Main Interface](provide main interface screenshot)
+<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/ac5ffec8-96e5-432b-8b2b-9bbc1f42428d" />
+
 
 ## Installation
 
@@ -38,7 +39,9 @@ The GeoFS MCDU plugin is a multifunctional Control Display Unit (MCDU) simulator
 
 ### INIT Page
 
-![INIT Page](provide INIT page screenshot)
+
+<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/f0b41183-b18d-4e53-b1ca-8147c459b00d" />
+
 
 Used to set initial flight information:
 
@@ -54,7 +57,10 @@ Used to set initial flight information:
 
 ### F-PLN Page
 
-![F-PLN Page](provide F-PLN page screenshot)
+
+<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/2fcc6cee-07c7-465d-bf55-d42d3cd996f0" />
+
+
 
 Used to manage flight plan waypoints:
 
@@ -70,7 +76,8 @@ Used to manage flight plan waypoints:
 
 ### PROG Page
 
-![PROG Page](provide PROG page screenshot)
+<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/09317272-0ba6-40fb-b665-006464a908b4" />
+
 
 Displays real-time flight data (auto-updates every 0.5 seconds):
 
@@ -81,29 +88,44 @@ Displays real-time flight data (auto-updates every 0.5 seconds):
 
 ### PREF Page
 
-![PREF Page](provide PREF page screenshot)
 
 Performance calculation pages (use "←" and "→" to switch):
 
 #### TAKE OFF Page
+
+<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/f91ea011-53e7-4141-981e-8a14721fd43e" />
+
+
 - **V1/VR/V2**: Takeoff speeds (3-digit numbers)
 - **TRANS ALT**: Transition altitude (4-digit number)
 - **FLAPS**: Flap setting (number 0-4 or angle 1°-40°)
 - **TO TEMP**: Takeoff temperature (number with optional "-")
 
 #### CLB Page
+
+<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/cac39aa8-6564-49d6-8b78-15100773c015" />
+
+
 - **COST INDEX**: Same as INIT page
 - **CLB WIND/TRIP WIND**: Wind direction/speed (format: DDD/SS)
 - **ECON CLB SPD**: Economy climb speed (3-digit number)
 - **STEP ALTS**: Step altitudes (format: FFFFF/FFFFF)
 
 #### CRZ Page
+
+<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/5e433087-dd3d-4334-a85a-2eb83096c945" />
+
+
 - **CRZ FL/OPT FL**: Cruise/optimal flight level (format: FLxxx)
 - **ECON CRZ SPD**: Economy cruise speed (decimal like .78)
 - **WIND**: Wind information (format: DDD/SS)
 - **T/D PRED**: Top of descent prediction (number)
 
 #### DES Page
+
+<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/4172fd2d-0148-4343-a141-a96dbef4a48f" />
+
+
 - **ECON DES SPD**: Economy descent speed (converts to Mach)
 - **MAN DES SPD**: Manual descent speed (format: SSS/MMMM)
 - **DECEL PT**: Deceleration point (format: DDD/SSNM)
@@ -111,7 +133,8 @@ Performance calculation pages (use "←" and "→" to switch):
 
 ### CHECKLIST Page
 
-![CHECKLIST Page](provide CHECKLIST page screenshot)
+<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/3007e52a-46bf-4554-85c8-73dbd3a88356" />
+
 
 Interactive checklist system (10 phases):
 
@@ -149,4 +172,6 @@ Interactive checklist system (10 phases):
 
 ---
 
-Would you like me to provide specific screenshot requirements for each section? I can list exactly what visual elements would be most helpful to include with each part of the documentation.
+- This plugin is based on the A320 MCDU and has no significant relevance to GeoFS itself. All operations are additional, but they ensure professional operation.
+- For some reasons, it cannot be integrated with Flight Plan at this time.
+- Other pages will be improved in the future.
