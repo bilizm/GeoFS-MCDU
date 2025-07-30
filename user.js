@@ -228,7 +228,7 @@
                     let idx = wptStart + j;
                     screenMain.innerHTML += `<div class='mcdu-wpt mcdu-wpt-empty' data-wpt='${idx}' style='color:#888;'>${idx + 1}. ---</div>`;
                 }
-                screenMain.innerHTML += `<div style='text-align:center;color:#888'>航点添加：输入后点击空行直接录入</div>`;
+                screenMain.innerHTML += `<div style='text-align:center;color:#888'> </div>`;
                 screenMain.innerHTML += `<div style='text-align:right;color:#00FF00'>↑↓</div>`;
             }
         }
