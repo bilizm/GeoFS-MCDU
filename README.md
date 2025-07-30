@@ -79,7 +79,7 @@ Used to set initial flight information:
 <img width="696" height="234" alt="image" src="https://github.com/user-attachments/assets/d709b512-62f0-45aa-91a4-24363621ae5d" />
 
 
-3. **Airport Subpages**:
+2. **Airport Subpages**:
    - **Departure Page**: Click on the ICAO green code of your departure airport, Set runway (RWY) and SID procedures
 
   <img width="694" height="231" alt="image" src="https://github.com/user-attachments/assets/c6cb49fe-36db-48ee-8e81-593978a3d2fd" />
