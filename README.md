@@ -19,7 +19,7 @@ The GeoFS MCDU add-on is a multifunctional Control Display Unit (MCDU) simulator
 
 
 
-**This add-on is based on a simplified version of the A320 MCDU and cannot be connected to GeoFS itself.**
+**This add-on is based on a simplified version of the A320 MCDU and there may be some unprofessional places.**
 
 <img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/ac5ffec8-96e5-432b-8b2b-9bbc1f42428d" />
 
