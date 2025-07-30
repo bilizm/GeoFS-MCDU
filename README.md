@@ -1,7 +1,7 @@
 # GeoFS MCDU Add-on
 
 ## Table of Contents
-1. [Plugin Introduction](#plugin-introduction)
+1. [Introduction](#plugin-introduction)
 2. [Installation](#installation)
 3. [Basic Operations](#basic-operations)
 4. [Page Functions Explained](#page-functions-explained)
@@ -13,9 +13,9 @@
    - [Other Pages](#other-pages)
 5. [Important Notes](#important-notes)
 
-## Plugin Introduction
+## Introduction
 
-The GeoFS MCDU plugin is a multifunctional Control Display Unit (MCDU) simulator designed for the GeoFS flight simulator. It provides flight plan management, performance calculations, checklists, and other features, compatible with all aircraft in GeoFS.
+The GeoFS MCDU add-on is a multifunctional Control Display Unit (MCDU) simulator designed for the GeoFS flight simulator. It provides flight plan management, performance calculations, checklists, and other features, compatible with all aircraft in GeoFS.
 
 <img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/ac5ffec8-96e5-432b-8b2b-9bbc1f42428d" />
 
