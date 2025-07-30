@@ -220,11 +220,11 @@
                     <span style="display:inline-block;width:68px">ALT</span>
                     <span style="display:inline-block;width:80px">${d.altitude}FT</span>
                     <span style="display:inline-block;width:50px">SPD</span>
-                    <span style="display:inline-block;width:60px">${d.speed}M</span>
+                    <span style="display:inline-block;width:60px">${d.speed}KTS</span>
                 </div>
                 <div style="color:white;">
                     <span style="display:inline-block;width:68px">V/S</span>
-                    <span style="display:inline-block;width:80px">${d.vs}FT/M</span>
+                    <span style="display:inline-block;width:80px">${d.vs}FPM</span>
                     <span style="display:inline-block;width:50px">TRK</span>
                     <span style="display:inline-block;width:60px">${d.track}°</span>
                 </div>
