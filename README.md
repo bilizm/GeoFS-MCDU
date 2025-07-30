@@ -196,7 +196,7 @@ Interactive checklist system (10 phases):
    - AFTER LANDING
    - AIRCRAFT SHUTDOWN
 
-### Other Pages
+### Pages
 
 #### Available Pages:
 - **PERF**: Data entry at four stages of a flight
