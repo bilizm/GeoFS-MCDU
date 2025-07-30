@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Please read the instructions on GitHub before use.
 // @author       zm
 // @LICENSE      MIT
@@ -91,6 +91,30 @@
     let fplnPageIdx = 0;
     const fplnPerPage = 5;
 
+    function updateFplnWaypointsFromDOM() {
+    const routeNodes = [...document.querySelectorAll(".geofs-waypointIdent")];
+    fplnWaypoints = routeNodes.map(el => {
+        let lat = parseFloat(el.parentElement?.dataset?.lat);
+        let lon = parseFloat(el.parentElement?.dataset?.lon);
+        let name = el.textContent.trim().toUpperCase();
+
+        if ((isNaN(lat) || isNaN(lon)) && window.geofs?.nav?.flightPlan) {
+            const match = geofs.nav.flightPlan.find(p => p.ident === name);
+            if (match) {
+                lat = match.lat;
+                lon = match.lon;
+            }
+        }
+
+        return {
+            name,
+            lat: isNaN(lat) ? null : lat,
+            lon: isNaN(lon) ? null : lon
+        };
+    }).filter(el => el.name && el.name !== "---");
+}
+
+
     // DEPARTURE/ARRIVAL
     let subPageAirport = '';
     let departuresInfo = { RWY: '', SIDS: '' };
@@ -127,7 +151,7 @@
             <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
             <div style='text-align:center;color:cyan'>thank you for using it!</div>
             <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
-            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1.1</span></div>
+            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1.2</span></div>
             <div style='text-align:center'><a href='https://discord.gg/4snrKwHpAA' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a></div>`;
         }
         else if (currentSection === 'INIT') {
@@ -208,9 +232,10 @@
         }
         else if (currentSection === 'F-PLN') {
             const ftFilled = /^[A-Z]{4}\/[A-Z]{4}$/.test(initFields.fromTo);
-            if (!ftFilled) {
-                screenMain.innerHTML = `<div style='text-align:center;color:yellow;font-weight:bold;'>ERROR INIT INFORMATION IS NOT FILLED IN</div>`;
-            } else {
+            if (!ftFilled || fplnWaypoints.length === 0) {
+                screenMain.innerHTML = `<div style='text-align:center;color:yellow;font-weight:bold;font-size:16px;'>PLEASE IMPORT THE ROUTE AND INIT!</div>`;
+            }
+             else {
                 const [dep, arr] = initFields.fromTo.split('/');
                 screenMain.innerHTML = `
                   <div>
@@ -221,15 +246,23 @@
                 let wptStart = fplnPageIdx * fplnPerPage;
                 let wptEnd = Math.min(fplnWaypoints.length, wptStart + fplnPerPage);
                 for (let i = wptStart; i < wptEnd; ++i) {
+                    const wp = fplnWaypoints[i];
                     screenMain.innerHTML +=
-                        `<div class='mcdu-wpt' data-wpt='${i}' style='color:white;'>${i + 1}. ${fplnWaypoints[i].name}</div>`;
+                        `<div class='mcdu-wpt' data-wpt='${i}'>
+                            <span style='color:lightblue'>${i + 1}. ${wp.name}</span>&nbsp;&nbsp;
+                            <span style='color:lightblue'>${
+                              (wp.lat != null && wp.lon != null) 
+                                ? `${wp.lat.toFixed(2)} ${wp.lon.toFixed(2)}`
+                                : ''
+                            }</span>
+
+                        </div>`;
                 }
-                for (let j = wptEnd - wptStart; j < fplnPerPage; ++j) {
-                    let idx = wptStart + j;
-                    screenMain.innerHTML += `<div class='mcdu-wpt mcdu-wpt-empty' data-wpt='${idx}' style='color:#888;'>${idx + 1}. ---</div>`;
-                }
+
                 screenMain.innerHTML += `<div style='text-align:center;color:#888'> </div>`;
-                screenMain.innerHTML += `<div style='text-align:right;color:#00FF00'>↑↓</div>`;
+                const totalPages = Math.max(1, Math.ceil(fplnWaypoints.length / fplnPerPage));
+                screenMain.innerHTML += `<div style='text-align:right;color:#00FF00'>↑↓ &nbsp; Page ${fplnPageIdx + 1}/${totalPages}</div>`;
+
             }
         }
         else if (currentSection === 'departure') {
@@ -293,15 +326,6 @@
             screenMain.innerHTML += `<div style="text-align:right;color:#00FF00;font-size:14px;">
                 ${currentChecklistPage+1}/10 → ${nextTitle}
             </div>`;
-            // 交互
-            Array.from(screenMain.querySelectorAll('.mcdu-checklist-item')).forEach(el => {
-                el.onmouseenter = () => { el.style.cursor = 'pointer'; };
-                el.onclick = () => {
-                    const idx = parseInt(el.getAttribute('data-idx'));
-                    checklistState[currentChecklistPage][idx] = !checklistState[currentChecklistPage][idx];
-                    mcduRenderPage(screenMain, screenInput);
-                };
-            });
         }
 
         screenInput.textContent = showError ? "ERROR" : inputBuffer;
@@ -545,11 +569,9 @@
                         showError = false;
                         if (label === "CLR") inputBuffer = "";
                         else if (label === "DEL") {
-                            if (currentSection === 'F-PLN' && fplnWaypoints.length > 0) {
-                                fplnWaypoints.pop();
-                            }
-                            else inputBuffer = inputBuffer.slice(0, -1);
+                           inputBuffer = inputBuffer.slice(0, -1);
                         }
+
                         else if (label === "SP") inputBuffer += " ";
                         else if (label === "+/-") {
                             if (/^\d+$/.test(inputBuffer)) inputBuffer = '-' + inputBuffer;
@@ -591,9 +613,13 @@
                         else if (label === "MCDU\nMENU") currentSection = 'menu';
                         else if (sectionNames.includes(label)) {
                             currentSection = label;
-                            if (label === 'F-PLN') fplnPageIdx = 0;
+                            if (label === 'F-PLN') {
+                                fplnPageIdx = 0;
+                                updateFplnWaypointsFromDOM();
+                            }
                             if (label === 'CHECK\nLIST') currentChecklistPage = 0;
                         }
+
                         else inputBuffer += label.replace("\n", "");
                         mcduRenderPage(screenMain, screenInput);
                     };
@@ -742,7 +768,14 @@
         });
 
         mcduPanel._v1timer = setInterval(() => {
+            updateFplnWaypointsFromDOM(); 
+            if (currentSection === 'F-PLN') {
+                mcduRenderPage(screenMain, screenInput);
+            }
+
+
             if (currentSection === 'PROG') mcduRenderPage(screenMain, screenInput);
+
             let v1ForSound = null;
             let v1Raw = perfData['TAKE OFF']?.V1;
             if (/^\d{3}$/.test(v1Raw)) v1ForSound = parseInt(v1Raw, 10);
@@ -813,13 +846,4 @@
         addMCDUToolbarButton();
     });
     setTimeout(addMCDUToolbarButton, 3000);
-
-    document.addEventListener("keydown", function (e) {
-        if (["INPUT", "TEXTAREA"].includes(document.activeElement.tagName)) return;
-        if (e.key.toLowerCase() === "m") {
-            e.preventDefault();
-            if (mcduPanelOpen) closeMCDUPanel();
-            else openMCDUPanel();
-        }
-    }, true);
 })();
