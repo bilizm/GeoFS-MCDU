@@ -156,7 +156,7 @@ Performance calculation pages (use "←" and "→" to switch):
 
 ### CHECKLIST Page
 
-**You can find out what to do at each stage of the flight here!**
+**Don't worry about what you should fill out and when! You can find out what to do at each stage of the flight here!**
 
 <img width="1038" height="350" alt="UNJ %M$74{XGF@RIGIV4$I0" src="https://github.com/user-attachments/assets/ea32f088-e7c8-48f0-96f5-cd8b67ec56f8" />
 
