@@ -1,4 +1,4 @@
-# GeoFS MCDU Plugin User Guide
+# GeoFS MCDU Add-on
 
 ## Table of Contents
 1. [Plugin Introduction](#plugin-introduction)
