@@ -166,7 +166,7 @@ When you click on the corresponding frequency of the runway.
 
 <img width="696" height="375" alt="@ SN(~SR Q02%I6@G`M@A 9" src="https://github.com/user-attachments/assets/a627086b-c31e-4c1e-b23d-85f2a372a0ac" />
 
-Then it will display the corresponding runway frequency you just clicked. (The heading part of VOR1 and ILS cannot obtain specific data)
+Then it will display the corresponding runway frequency you just clicked. (The heading part of ILS and ILS cannot obtain information)
 
 <img width="640" height="233" alt="NF4`5MVW8 R_2 TW@9F~UI4" src="https://github.com/user-attachments/assets/a7ba2204-4f73-4c0b-8478-ce8a03b66352" />
 
