@@ -17,7 +17,7 @@
     let mcduPanel = null;
 
     // ------------------------------- MCDU页面与功能原始代码 -------------------------------
-    // V1音频播报相关
+    // V1 sound
     let v1Value = null, v1Played = false;
     let v1Audio = null;
     const V1_AUDIO_URL = "https://raw.githubusercontent.com/Bilibilizm/GeoFS-zms-fans-addon/main/material/V1.WAV";
@@ -26,7 +26,7 @@
         v1Audio.play();
     }
 
-    // 检查单内容
+    // checklist
     const checklistPages = [
         { title: "PREF", items: ["FLIGHT PLAN...IMPORT", "ALTITUDE/SPEED...INPUT", "PERF-TAKE OFF...IMPORT", "PERF-CLB...IMPORT"] },
         { title: "BEFORE LAUNCH", items: ["BRAKE...UP", "DOORS...CLOSE"] },
@@ -42,7 +42,7 @@
     let checklistState = Array(checklistPages.length).fill().map((_, pageIdx) => checklistPages[pageIdx].items.map(() => false));
     let currentChecklistPage = 0;
 
-    // 状态
+    // state
     const sectionNames = ["INIT", "F-PLN", "PROG", "PREF", "DATA", "DIM BRT", "AIR\nPORT", "DIR", "RAD\nNAV", "SEC\nF-PLN", "FUFL\nPRED", "CHECK\nLIST", "MCDU\nMENU"];
     let currentSection = 'menu';
     let inputBuffer = "";
@@ -359,7 +359,7 @@
         screenInput.textContent = showError ? "ERROR" : inputBuffer;
         screenInput.style.color = showError ? 'red' : 'cyan';
 
-        // F-PLN机场代码点击进入子界面
+        // F-PLN subpages
         if (currentSection === 'F-PLN') {
             if (document.getElementById('mcdu-dep')) {
                 document.getElementById('mcdu-dep').onclick = () => {
