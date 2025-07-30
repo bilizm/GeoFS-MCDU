@@ -154,6 +154,17 @@ Performance calculation pages (use "←" and "→" to switch):
 - **DECEL PT**: Deceleration point (format: DDD/SSNM)
 - **APPR SPEED**: Approach speed (3-digit number)
 
+
+### RAD NAV Page
+The first time you click it to enter the page, three N/V will be displayed.
+<img width="640" height="234" alt="3FSZJ0~5 S (P}S9MU_69}H" src="https://github.com/user-attachments/assets/e40378b2-2510-4bea-b260-acc74811595c" />
+When you click on the corresponding frequency of the runway.
+<img width="696" height="375" alt="@ SN(~SR Q02%I6@G`M@A 9" src="https://github.com/user-attachments/assets/a627086b-c31e-4c1e-b23d-85f2a372a0ac" />
+Then it will display the corresponding runway frequency you just clicked. (The heading part of VOR1 and ILS cannot obtain specific data)
+<img width="640" height="233" alt="NF4`5MVW8 R_2 TW@9F~UI4" src="https://github.com/user-attachments/assets/a7ba2204-4f73-4c0b-8478-ce8a03b66352" />
+
+
+
 ### CHECKLIST Page
 
 **Don't worry about what you should fill out and when! You can find out what to do at each stage of the flight here!**
@@ -181,7 +192,6 @@ Interactive checklist system (10 phases):
 ### Other Pages
 
 - **AIR PORT**: Airport information (under development)
-- **RAD NAV**: Radio navigation (not implemented)
 - **SEC F-PLN**: Secondary flight plan (not implemented)
 - **FUEL PRED**: Fuel prediction (not implemented)
 - **DIM BRT**: Screen brightness (not implemented)
