@@ -20,7 +20,7 @@ The GeoFS MCDU add-on is a multifunctional Control Display Unit (MCDU) simulator
 
 
 ## How to enter information
-Use the virtual keyboard to fill in the information in the input box in the lower left corner of the display, and then use the mouse to click the corresponding field to enter.(I didn't make the LSK button)
+Use the virtual keyboard to fill in the information in the input box in the lower left corner of the display, and then use the mouse to click the corresponding field to enter.(I didn't make the LSK buttons)
 
 
 **This plugin is based on a simplified version of the A320 MCDU and cannot be connected to GeoFS itself.**
