@@ -39,7 +39,7 @@ Use the virtual keyboard to fill in the information in the input box in the lowe
 
 ## Basic Operations
 
-- **Open/Close MCDU**: Click the "MCDU" button in the bottom-right corner of the GeoFS interface.
+- **Open/Close MCDU**: Click the "MCDU" button in the bottom-right corner of the GeoFS interface or click M key.
 - **Enter Data**: Use the keyboard buttons below the screen
 - **Clear Input**: Use the "CLR" button
 - **Delete Characters**: Use the "DEL" button
