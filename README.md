@@ -169,7 +169,7 @@ Interactive checklist system (10 phases):
 3. For best experience, complete INIT page before F-PLN
 4. Performance calculations are estimates only
 5. Join our [Discord group](https://discord.gg/4snrKwHpAA) for support
-6. To enter a negative number: First enter the number in the input box, then click the `+/-` key to make it negative. (For example, to enter -5, first click `5` and then click `+/-`. Click `+/-` again to make it 5)
+6. To enter a negative number: First enter the number in the input box, then click the +/- key to make it negative. (For example, to enter -5, first click 5 and then click +/-. Click +/-again to make it 5)
 
 ---
 
