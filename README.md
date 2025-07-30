@@ -1,227 +1,152 @@
-# GeoFS MCDU Plugin
+# GeoFS MCDU Plugin User Guide
 
-**GeoFS MCDU** is a browser userscript that brings a fully interactive MCDU (Multipurpose Control and Display Unit) to the GeoFS flight simulator. Designed for realism and convenience, this plugin supports flight planning, performance input (V1/VR/V2), auto V1 callout, checklists, and more — applicable to **all aircraft types** in GeoFS.
+## Table of Contents
+1. [Plugin Introduction](#plugin-introduction)
+2. [Installation](#installation)
+3. [Basic Operations](#basic-operations)
+4. [Page Functions Explained](#page-functions-explained)
+   - [INIT Page](#init-page)
+   - [F-PLN Page](#f-pln-page)
+   - [PROG Page](#prog-page)
+   - [PREF Page](#pref-page)
+   - [CHECKLIST Page](#checklist-page)
+   - [Other Pages](#other-pages)
+5. [Important Notes](#important-notes)
 
-Author: [@bilizm](https://github.com/bilizm)  
-Version: 0.1  
-Discord Group: [Join here](https://discord.gg/4snrKwHpAA)
+## Plugin Introduction
 
----
+The GeoFS MCDU plugin is a multifunctional Control Display Unit (MCDU) simulator designed for the GeoFS flight simulator. It provides flight plan management, performance calculations, checklists, and other features, compatible with all aircraft in GeoFS.
 
-## 📸 Screenshot Guide
+![MCDU Main Interface](provide main interface screenshot)
 
-Please prepare the following screenshots to include in your README:
+## Installation
 
-1. **Main MCDU panel** open on GeoFS, showing INIT A page.
-2. MCDU toolbar button in GeoFS **bottom UI**.
-3. Example input on pages like `F-PLN`, `PERF`, `CHECKLIST`.
-4. Highlight of **V1 audio trigger** near V1 speed.
-5. Checklist ticking interaction.
+1. Ensure you have Tampermonkey or a similar userscript manager installed
+2. Visit the [GitHub repository](https://github.com/your-repo-address) to get the latest script
+3. Click the "Raw" button - Tampermonkey will prompt for installation
+4. After confirming installation, refresh the GeoFS page to use it
 
----
+## Basic Operations
 
-## 🔧 How to Install
+- **Open/Close MCDU**: Click the "MCDU" button in the bottom-right corner of the GeoFS interface, or press the "M" key
+- **Enter Data**: Use the keyboard buttons below the screen
+- **Clear Input**: Use the "CLR" button
+- **Delete Characters**: Use the "DEL" button
+- **Switch Pages**: Use the top function buttons (INIT, F-PLN, PROG, etc.)
 
-### 1. Install Tampermonkey
+## Page Functions Explained
 
-This script runs via [Tampermonkey](https://www.tampermonkey.net/), a browser extension that manages user scripts.
+### INIT Page
 
-- **Chrome / Edge**: [Install Tampermonkey](https://www.tampermonkey.net/)
-- **Firefox**: [Install from Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/)
+![INIT Page](provide INIT page screenshot)
 
-> After installing, a black-and-white Tampermonkey icon should appear in the browser toolbar.
+Used to set initial flight information:
 
-📸 Screenshot tip: show the browser with Tampermonkey icon installed.
+1. **CO RTE**: Company route (not yet implemented)
+2. **ALTN/CO RTE**: Alternate airport (4-letter ICAO code)
+   - Example: Enter "KLAX" to set Los Angeles as alternate
+3. **FROM/TO**: Departure/destination airport (format: AAAA/BBBB)
+   - Example: Enter "KJFK/EGLL" for New York to London route
+4. **FLT NMB**: Flight number (free format)
+5. **COST INDEX**: Cost index (number 0-999)
+6. **CRZ FL/TEMP**: Cruise flight level and temperature (format: FLxxx)
+   - Example: Enter "FL350" will automatically calculate and display "FL350/-55°"
 
----
+### F-PLN Page
 
-### 2. Install the GeoFS MCDU Script
+![F-PLN Page](provide F-PLN page screenshot)
 
-1. Visit the script file:  
-   [GeoFS-MCDU.user.js](https://github.com/bilizm/GeoFS-MCDU/raw/main/GeoFS-MCDU.user.js)
-2. Tampermonkey will prompt an install page. Click **Install**.
-3. Open [https://www.geo-fs.com](https://www.geo-fs.com)
-4. Wait for GeoFS to fully load, and the **MCDU** button will appear in the bottom toolbar.
+Used to manage flight plan waypoints:
 
----
+1. Click departure/destination airport codes to access detailed pages
+2. **Add Waypoints**:
+   - Enter waypoint ID in the input box (2-8 alphanumeric characters)
+   - Click on an empty waypoint line to add it
+3. **Delete Waypoints**:
+   - Press "DEL" to remove the last waypoint
+4. **Airport Subpages**:
+   - **Departure Page**: Set runway (RWY) and SID procedures
+   - **Arrival Page**: Set STAR procedures, transitions, and ILS runway
 
-## 🚀 How to Use
+### PROG Page
 
-### Opening the MCDU Panel
+![PROG Page](provide PROG page screenshot)
 
-- Click the **`MCDU`** button in GeoFS bottom UI.
-- Or press **`M` key** on your keyboard to toggle the panel.
+Displays real-time flight data (auto-updates every 0.5 seconds):
 
-📸 Screenshot tip: show the MCDU button in the GeoFS bottom toolbar.
+1. **ALT**: Current altitude (feet)
+2. **SPD**: Current ground speed (knots)
+3. **V/S**: Vertical speed (feet/minute)
+4. **TRK**: Current track (degrees)
 
----
+### PREF Page
 
-## 🧭 Page-by-Page Usage Guide
+![PREF Page](provide PREF page screenshot)
 
-### 🟩 `MCDU MENU`
+Performance calculation pages (use "←" and "→" to switch):
 
-The home screen. Displays:
+#### TAKE OFF Page
+- **V1/VR/V2**: Takeoff speeds (3-digit numbers)
+- **TRANS ALT**: Transition altitude (4-digit number)
+- **FLAPS**: Flap setting (number 0-4 or angle 1°-40°)
+- **TO TEMP**: Takeoff temperature (number with optional "-")
 
-- Plugin version
-- Author info
-- Link to Discord group
+#### CLB Page
+- **COST INDEX**: Same as INIT page
+- **CLB WIND/TRIP WIND**: Wind direction/speed (format: DDD/SS)
+- **ECON CLB SPD**: Economy climb speed (3-digit number)
+- **STEP ALTS**: Step altitudes (format: FFFFF/FFFFF)
 
-This is the default page on launch.
+#### CRZ Page
+- **CRZ FL/OPT FL**: Cruise/optimal flight level (format: FLxxx)
+- **ECON CRZ SPD**: Economy cruise speed (decimal like .78)
+- **WIND**: Wind information (format: DDD/SS)
+- **T/D PRED**: Top of descent prediction (number)
 
----
+#### DES Page
+- **ECON DES SPD**: Economy descent speed (converts to Mach)
+- **MAN DES SPD**: Manual descent speed (format: SSS/MMMM)
+- **DECEL PT**: Deceleration point (format: DDD/SSNM)
+- **APPR SPEED**: Approach speed (3-digit number)
 
-### 🟡 `INIT A` Page
+### CHECKLIST Page
 
-Set up the basic flight information:
+![CHECKLIST Page](provide CHECKLIST page screenshot)
 
-| Field        | Format Example | Description                                |
-|--------------|----------------|--------------------------------------------|
-| `FROM/TO`    | `ZBAA/ZSSS`     | Departure and arrival airport ICAO codes   |
-| `FLT NMB`    | `CSN123`        | Flight number                              |
-| `ALTN`       | `ZSPD`          | Alternate airport                          |
-| `COST INDEX` | `30`            | Used for cruise speed economy              |
-| `CRZ FL`     | `FL350`         | Cruise altitude, auto-calc temperature     |
+Interactive checklist system (10 phases):
 
-📸 Screenshot tip: filled INIT A page example.
+1. Use "←" and "→" to switch between checklist pages
+2. Click any item to mark it as complete (green checkmark appears)
+3. Checklist phases:
+   - PREF
+   - BEFORE LAUNCH
+   - AFTER LAUNCH
+   - BEFORE TAXI/TAKE OFF
+   - AFTER TAKE OFF
+   - CRUISE
+   - BEFORE DESCEND
+   - APPROACH
+   - AFTER LANDING
+   - AIRCRAFT SHUTDOWN
 
----
+### Other Pages
 
-### 🟦 `F-PLN` Page
+- **AIR PORT**: Airport information (under development)
+- **DIR**: Direct-to function (under development)
+- **RAD NAV**: Radio navigation (not implemented)
+- **SEC F-PLN**: Secondary flight plan (not implemented)
+- **FUEL PRED**: Fuel prediction (not implemented)
+- **DIM BRT**: Screen brightness (not implemented)
+- **DATA**: Data management (not implemented)
 
-Displays the route with editable waypoints.
+## Important Notes
 
-- Click the **departure or arrival ICAO code** to enter `DEPARTURE` or `ARRIVAL` subpages.
-- Add waypoints by typing the waypoint name (e.g. `NDB12`) and clicking an empty line.
-- Use arrows ← ↑ ↓ → to scroll pages.
-
-📸 Screenshot tip: example with several added waypoints.
-
----
-
-### ✈️ `DEPARTURE` / `ARRIVAL` Subpages
-
-Set runway, SIDs, STARs, transitions:
-
-#### `DEPARTURE`
-| Field | Description                    |
-|-------|--------------------------------|
-| RWY   | Runway identifier (e.g. 36L)   |
-| SIDS  | SID procedure name             |
-
-#### `ARRIVAL`
-| Field   | Description                  |
-|---------|------------------------------|
-| STAR    | STAR arrival route           |
-| TRANS   | Transition waypoint          |
-| ILS RWY | Runway with ILS (e.g. 34L)   |
-
-Click `<RETURN` to go back to `F-PLN`.
-
----
-
-### 📊 `PERF` Pages (TAKE OFF, CLB, CRZ, DES)
-
-Use arrows ← → to switch between 4 PERF subpages.
-
-#### `TAKE OFF`
-| Field   | Description                             |
-|---------|-----------------------------------------|
-| V1/VR/V2| Takeoff speeds in knots                 |
-| FLAPS   | e.g. `1`, `10°`                         |
-| TRANS ALT | Transition altitude (e.g. `10000`)   |
-| TO TEMP | Takeoff temp in °C                      |
-
-🔊 When aircraft speed reaches `V1`, a **V1 callout** will play.
-
-#### `CLB` (Climb)
-| Field         | Example  | Description               |
-|---------------|----------|---------------------------|
-| COST INDEX    | `30`     | Cost performance          |
-| CLB WIND      | `270/10` | Wind during climb         |
-| ECON CLB SPD  | `280`    | Target climb speed        |
-
-#### `CRZ` (Cruise)
-| Field       | Description               |
-|-------------|---------------------------|
-| CRZ FL      | Cruise FL (`FL350`)       |
-| OPT FL      | Optimal FL                |
-| WIND        | Cruise wind (`290/50`)    |
-| T/D PRED    | Top of descent prediction |
-
-#### `DES` (Descent)
-| Field        | Description                       |
-|--------------|-----------------------------------|
-| DES WIND     | Descent wind (`310/15`)           |
-| ECON DES SPD | Descent speed (`300/0.78`)        |
-| APPR SPD     | Approach speed                    |
-
-📸 Screenshot tip: show V1/VR/V2 entered + audio playing at takeoff
+1. V1 callout will automatically play when aircraft reaches V1-4 knots
+2. Some features are still under development (marked in interface)
+3. For best experience, complete INIT page before F-PLN
+4. Performance calculations are estimates only
+5. Join our [Discord group](https://discord.gg/4snrKwHpAA) for support
 
 ---
 
-### 📘 `PROG` Page
-
-Real-time flight data:
-
-| Field | Description                     |
-|-------|---------------------------------|
-| ALT   | Current altitude in feet        |
-| SPD   | Ground speed in Mach            |
-| V/S   | Vertical speed in feet/min      |
-| TRK   | Aircraft heading (track)        |
-
-Auto-refreshes every 0.5s while viewing.
-
----
-
-### ✅ `CHECKLIST` Page
-
-Interactive flight checklist covering 10 phases:
-
-1. PREF
-2. BEFORE LAUNCH
-3. AFTER LAUNCH
-4. BEFORE TAXI/TAKE OFF
-5. AFTER TAKE OFF
-6. CRUISE
-7. BEFORE DESCEND
-8. APPROACH
-9. AFTER LANDING
-10. AIRCRAFT SHUTDOWN
-
-- Click on each item to check/uncheck.
-- Use ← → to switch pages.
-
-📸 Screenshot tip: checklist in progress with checkboxes marked.
-
----
-
-### ❌ `DATA`, `DIM BRT`, `RAD NAV`, `SEC F-PLN`, `AIR PORT`, `DIR`, `FUFL PRED`
-
-Currently not implemented. Future development planned.
-
----
-
-## ⌨️ Keyboard Shortcuts
-
-| Key | Action                  |
-|-----|-------------------------|
-| `M` | Toggle MCDU panel       |
-
----
-
-## ⚠️ Notes
-
-- Works only in **desktop browsers** (Chrome, Edge, Firefox)
-- Wait until GeoFS is fully loaded before clicking MCDU
-- Code logic and structure are protected under the license
-
----
-
-## 📄 License
-
-This project is under the [MIT License](./LICENSE) with additional clauses:
-
-- ❗ Unauthorized **replication of code logic**, structure, or modifications **without author consent** is prohibited.
-- Attribution and license must remain with all redistributions.
-
+Would you like me to provide specific screenshot requirements for each section? I can list exactly what visual elements would be most helpful to include with each part of the documentation.
