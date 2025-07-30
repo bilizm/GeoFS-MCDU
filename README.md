@@ -52,7 +52,8 @@ Use the virtual keyboard to fill in the information in the input box in the lowe
 *Currently only INIT A.*
 
 
-<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/f0b41183-b18d-4e53-b1ca-8147c459b00d" />
+<img width="937" height="313" alt="6IBD4~CTDNXOF7C4C08NZ~J" src="https://github.com/user-attachments/assets/b946daaf-7e1b-47b6-af51-eb93d4a85d55" />
+
 
 
 Used to set initial flight information:
@@ -70,7 +71,8 @@ Used to set initial flight information:
 ### F-PLN Page
 
 
-<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/2fcc6cee-07c7-465d-bf55-d42d3cd996f0" />
+<img width="932" height="314" alt="WBCT4FMF`G88Y7MD01PJJ`0" src="https://github.com/user-attachments/assets/59cf3cb2-0633-42c1-a155-046b836d4609" />
+
 
 
 
@@ -96,7 +98,8 @@ Used to manage flight plan waypoints:
 
 ### PROG Page
 
-<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/09317272-0ba6-40fb-b665-006464a908b4" />
+<img width="934" height="314" alt="49 S$X7MOA{)KA46KR}I${U" src="https://github.com/user-attachments/assets/a5e5f890-f445-457f-abfa-99cf6aa937fc" />
+
 
 
 Displays real-time flight data (auto-updates every 0.5 seconds):
@@ -113,7 +116,8 @@ Performance calculation pages (use "←" and "→" to switch):
 
 #### TAKE OFF Page
 
-<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/f91ea011-53e7-4141-981e-8a14721fd43e" />
+<img width="923" height="309" alt="N@_{$70{ }~`( (%A7KAUJJ" src="https://github.com/user-attachments/assets/092bd103-b0cd-41bb-a17e-a88832dab4ff" />
+
 
 
 - **V1/VR/V2**: Takeoff speeds (3-digit numbers)
@@ -123,7 +127,8 @@ Performance calculation pages (use "←" and "→" to switch):
 
 #### CLB Page
 
-<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/cac39aa8-6564-49d6-8b78-15100773c015" />
+<img width="1035" height="354" alt="RCM1Q@K4WTHE398SSY8~D(U" src="https://github.com/user-attachments/assets/47589b09-d0f9-4551-a6f7-a06878641c31" />
+
 
 
 - **COST INDEX**: Same as INIT page
@@ -133,7 +138,8 @@ Performance calculation pages (use "←" and "→" to switch):
 
 #### CRZ Page
 
-<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/5e433087-dd3d-4334-a85a-2eb83096c945" />
+<img width="1033" height="349" alt="D2LSI$ZA8U~LCU5@7TTZBYV" src="https://github.com/user-attachments/assets/18f61c9b-437f-4dd3-8e2f-03d3d0fe3b1a" />
+
 
 
 - **CRZ FL/OPT FL**: Cruise/optimal flight level (format: FLxxx)
@@ -143,7 +149,8 @@ Performance calculation pages (use "←" and "→" to switch):
 
 #### DES Page
 
-<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/4172fd2d-0148-4343-a141-a96dbef4a48f" />
+<img width="1036" height="349" alt="FB5R5JZ(LM(K``A6{YND9KI" src="https://github.com/user-attachments/assets/cdd75440-6faf-49fc-9e2d-2dcbe0a0f161" />
+
 
 
 - **ECON DES SPD**: Economy descent speed (converts to Mach)
@@ -155,7 +162,8 @@ Performance calculation pages (use "←" and "→" to switch):
 
 **You can find out what to do at each stage of the flight here!**
 
-<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/3007e52a-46bf-4554-85c8-73dbd3a88356" />
+<img width="1038" height="350" alt="UNJ %M$74{XGF@RIGIV4$I0" src="https://github.com/user-attachments/assets/ea32f088-e7c8-48f0-96f5-cd8b67ec56f8" />
+
 
 
 Interactive checklist system (10 phases):
