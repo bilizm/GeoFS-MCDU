@@ -41,6 +41,8 @@ The GeoFS MCDU add-on is a multifunctional Control Display Unit (MCDU) simulator
 
 ### INIT Page
 
+*Currently only INIT A.*
+
 
 <img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/f0b41183-b18d-4e53-b1ca-8147c459b00d" />
 
@@ -100,7 +102,7 @@ Performance calculation pages (use "←" and "→" to switch):
 
 - **V1/VR/V2**: Takeoff speeds (3-digit numbers)
 - **TRANS ALT**: Transition altitude (4-digit number)
-- **FLAPS**: Flap setting (number 0-4 or angle 1°-40°)
+- **FLAPS**: Flap setting (Airbus 1~4 or Boeing 1~40, if the aircraft is a Boeing, enter the flap degrees directly without the symbols!)
 - **TO TEMP**: Takeoff temperature (number with optional "-")
 
 #### CLB Page
