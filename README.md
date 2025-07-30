@@ -198,11 +198,21 @@ Interactive checklist system (10 phases):
 
 ### Other Pages
 
-- **AIR PORT**: Airport information (under development)
-- **SEC F-PLN**: Secondary flight plan (not implemented)
-- **FUEL PRED**: Fuel prediction (not implemented)
-- **DIM BRT**: Screen brightness (not implemented)
-- **DATA**: Data management (not implemented)
+#### Available Pages:
+- **PERF**: Data entry at four stages of a flight
+- **INIT**: Fill in basic flight information
+- **F-PLN**: Display all waypoints after importing the route
+- **RAD NAV**: Displays information about aircraft approaching
+- **CHECK LIST**: What to do at ten moments on a flight
+- **MCDU MENU**: Basic information about this add-on
+
+#### Unavailable pages:
+- **AIR PORT**: Airport information
+- **SEC F-PLN**: Secondary flight plan 
+- **FUEL PRED**: Fuel prediction 
+- **DIM BRT**: Screen brightness 
+- **DATA**: Data management
+- **DIR**：Fly directly to a waypoint
 
 ## Important Notes
 
