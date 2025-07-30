@@ -72,21 +72,14 @@ Used to set initial flight information:
 
 ### F-PLN Page
 
+1. **Flight waypoint display**:After you import routes into GeoFS FlightPlan, this page will display all the routes you imported.
 
-<img width="932" height="314" alt="WBCT4FMF`G88Y7MD01PJJ`0" src="https://github.com/user-attachments/assets/59cf3cb2-0633-42c1-a155-046b836d4609" />
+**You must enter the FROM/TO part in the INIT page and import the route in GeoFS FlightPlan to see all the waypoints!**
+
+<img width="696" height="234" alt="image" src="https://github.com/user-attachments/assets/d709b512-62f0-45aa-91a4-24363621ae5d" />
 
 
-
-
-Used to manage flight plan waypoints:
-
-1. Click departure/destination airport codes to access detailed pages
-2. **Add Waypoints**:
-   - Enter waypoint ID in the input box (2-8 alphanumeric characters)
-   - Click on an empty waypoint line to add it
-3. **Delete Waypoints**:
-   - Press "DEL" to remove the last waypoint
-4. **Airport Subpages**:
+3. **Airport Subpages**:
    - **Departure Page**: Click on the ICAO green code of your departure airport, Set runway (RWY) and SID procedures
 
   <img width="694" height="231" alt="image" src="https://github.com/user-attachments/assets/c6cb49fe-36db-48ee-8e81-593978a3d2fd" />
