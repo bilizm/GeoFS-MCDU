@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.1.1
 // @description  Please read the instructions on GitHub before use.
 // @author       zm
 // @LICENSE      MIT
@@ -127,7 +127,7 @@
             <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
             <div style='text-align:center;color:cyan'>thank you for using it!</div>
             <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
-            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1</span></div>
+            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1.1</span></div>
             <div style='text-align:center'><a href='https://discord.gg/4snrKwHpAA' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a></div>`;
         }
         else if (currentSection === 'INIT') {
@@ -584,7 +584,7 @@
                             }
                         } else if (label === "↓") {
                             if (currentSection === 'F-PLN') {
-                                const maxIdx = Math.max(0, Math.ceil(fplnWaypoints.length / fplnPerPage) - 1);
+                                const maxIdx = Math.max(0, Math.ceil((fplnWaypoints.length + 1) / fplnPerPage) - 1);
                                 fplnPageIdx = fplnPageIdx < maxIdx ? fplnPageIdx + 1 : maxIdx;
                             }
                         }
