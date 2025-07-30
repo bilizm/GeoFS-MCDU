@@ -84,7 +84,15 @@ Used to manage flight plan waypoints:
    - Press "DEL" to remove the last waypoint
 4. **Airport Subpages**:
    - **Departure Page**: Click on the ICAO green code of your departure airport, Set runway (RWY) and SID procedures
+
+  <img width="694" height="231" alt="image" src="https://github.com/user-attachments/assets/c6cb49fe-36db-48ee-8e81-593978a3d2fd" />
+
+
    - **Arrival Page**: Click on the ICAO green code of the arrival airport, Set STAR procedures, transitions, and ILS runway
+
+<img width="689" height="233" alt="image" src="https://github.com/user-attachments/assets/bf4befe7-f80b-476b-aa63-8154a71d5ffc" />
+
+
 
 ### PROG Page
 
