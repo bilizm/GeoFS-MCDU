@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
+// @version      0.1.4
 // @description  Please read the instructions on GitHub before use.
 // @author       開飛機のzm
 // @LICENSE      MIT
@@ -150,10 +150,10 @@
         if (currentSection === 'menu') {
             screenMain.innerHTML = `<div style='text-align:center;color:white;font-weight:bold;margin-bottom:10px'>GEOFS MCDU</div>
             <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
-            <div style='text-align:center;color:cyan'>Thank you for using it!</div>
+            <div style='text-align:center;color:cyan'>Thanks for using it!</div>
             <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
-            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1.3</span></div>
-            <div style='text-align:center'><a href='https://discord.gg/4snrKwHpAA' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a></div>`;
+            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1.4</span></div>
+            <div style='text-align:center'><a href='https://discord.gg/Wsk9zC2kMf' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a></div>`;
         }
         else if (currentSection === 'INIT') {
             screenMain.innerHTML = `<div style='text-align:center;color:white'>INIT A</div>
@@ -307,20 +307,37 @@
                 const navFreq = navFreqEl?.value || "N/V";
                 const isValidFreq = /^\d{3}\.\d{2}$/.test(navFreq) && parseFloat(navFreq) >= 108.0 && parseFloat(navFreq) <= 117.95;
 
+                // 默认显示为 ------
+                let courseStr = "------";
+
+                // 航向
+                if (isValidFreq) {
+                    const courseInput = document.querySelector("input.geofs-autopilot-course");
+                    if (courseInput) {
+                        const rawValue = courseInput.value;
+                        const parsed = parseInt(rawValue, 10);
+                        if (!isNaN(parsed) && parsed >= 0 && parsed <= 359) {
+                            // 补全
+                            courseStr = parsed.toString().padStart(3, '0') + "°";
+                        }
+                    }
+                }
+
                 screenMain.innerHTML = `
                     <div style='text-align:center;color:white;font-weight:bold;'>RAD NAV</div>
                     <div style='color:white;'>
-                        VOR1: <span style='color:${isValidFreq ? "cyan" : "orange"}'>${isValidFreq ? navFreq + "/------" : "N/V"}</span>
+                        VOR1: <span style='color:${isValidFreq ? "cyan" : "orange"}'>${isValidFreq ? navFreq + "/" + courseStr : "N/V"}</span>
                     </div>
                     <div style='color:white;'>
                         VOR2: <span style='color:${isValidFreq ? "cyan" : "orange"}'>${isValidFreq ? "AUTO" : "N/V"}</span>
                     </div>
                     <div style='color:white;'>
-                        ILS:  <span style='color:${isValidFreq ? "cyan" : "orange"}'>${isValidFreq ? "N/V" : "N/V"}</span>
+                        ILS:  <span style='color:${isValidFreq ? "cyan" : "orange"}'>N/V</span>
                     </div>
                     <div style='text-align:right;color:white'>RAD NAV PAGE</div>
                 `;
             }
+
 
     renderRadNav();
 
