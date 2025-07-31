@@ -160,7 +160,7 @@ Performance calculation pages (use "←" and "→" to switch):
 
 ### RAD NAV Page
 
-The first time you click it to enter the page, three N/V will be displayed.
+The first time you click it to enter the page, three N/A will be displayed.
 
 <img width="640" height="234" alt="3FSZJ0~5 S (P}S9MU_69}H" src="https://github.com/user-attachments/assets/e40378b2-2510-4bea-b260-acc74811595c" />
 
