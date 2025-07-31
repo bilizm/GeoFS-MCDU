@@ -185,7 +185,7 @@
                    USER: ${mcduUsername}
                </div>
                <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
-               <div style='text-align:center;color:cyan'>Thanks for using it!</div>
+               <div style='text-align:center;color:cyan'>Have a nice flight!</div>
                <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
                <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.1</span></div>
                <div style='text-align:center'>
