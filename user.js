@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
-// @version      0.1.4
+// @version      0.1.5
 // @description  Please read the instructions on GitHub before use!
 // @author       開飛機のzm
 // @LICENSE      MIT
@@ -152,7 +152,7 @@
             <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
             <div style='text-align:center;color:cyan'>Thanks for using it!</div>
             <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
-            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1.4</span></div>
+            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1.5</span></div>
             <div style='text-align:center'><a href='https://discord.gg/Wsk9zC2kMf' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a></div>`;
         }
         else if (currentSection === 'INIT') {
@@ -234,7 +234,7 @@
         else if (currentSection === 'F-PLN') {
             const ftFilled = /^[A-Z]{4}\/[A-Z]{4}$/.test(initFields.fromTo);
             if (!ftFilled || fplnWaypoints.length === 0) {
-                screenMain.innerHTML = `<div style='text-align:center;color:yellow;font-weight:bold;font-size:16px;'>PLEASE IMPORT THE ROUTE AND INIT!</div>`;
+                screenMain.innerHTML = `<div style='text-align:center;color:yellow;font-weight:bold;font-size:16px;'>PLEASE IMPORT THE ROUTE AND INIT PAGE!</div>`;
             }
              else {
                 const [dep, arr] = initFields.fromTo.split('/');
@@ -293,9 +293,16 @@
         else if (currentSection === 'DIR') {
             screenMain.innerHTML = `<div style="text-align:center;color:yellow;font-weight:bold;font-size:22px;margin-top:55px;">PLEASE USE FLIGHT PLAN FOR DIRECT FLIGHT</div>`;
         }
-        else if (currentSection === 'DIM BRT' || currentSection === 'DATA') {
+        else if (
+            currentSection === 'DIM BRT' ||
+            currentSection === 'DATA' ||
+            currentSection === 'FUFL\nPRED' ||
+            currentSection === 'SEC\nF-PLN' ||
+            currentSection === 'AIR\nPORT'
+        ) {
             screenMain.innerHTML = `<div style='text-align:center;color:yellow;font-weight:bold;font-size:24px;margin-top:50px;'>PAGE NOT IMPLEMENTED</div>`;
         }
+
         else if (currentSection === 'RAD\nNAV') {
             if (window.radNavTimer) {
                 clearInterval(window.radNavTimer);
