@@ -2,7 +2,7 @@
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
 // @version      0.1.4
-// @description  Please read the instructions on GitHub before use.
+// @description  Please read the instructions on GitHub before use!
 // @author       開飛機のzm
 // @LICENSE      MIT
 // @match        https://www.geo-fs.com/*
