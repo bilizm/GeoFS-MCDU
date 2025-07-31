@@ -171,7 +171,19 @@
         if (currentSection === 'menu') {
             screenMain.innerHTML = `
                <div style='text-align:center;color:white;font-weight:bold;margin-bottom:10px'>GEOFS MCDU</div>
-               <div style='position:absolute; top:5px; right:10px; color:white; font-size:12px;'>USER: ${mcduUsername}</div>
+               <div style="
+                   position: absolute;
+                  top: 5px;
+                   right: 10px;
+                   color: white;
+                   font-size: 12px;
+                   max-width: 120px;
+                   word-break: break-word;
+                   white-space: normal;
+                   text-align: right;
+               ">
+                   USER: ${mcduUsername}
+               </div>
                <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
                <div style='text-align:center;color:cyan'>Thanks for using it!</div>
                <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
