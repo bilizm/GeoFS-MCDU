@@ -972,36 +972,51 @@
     // -------------------- 工具栏按钮 ---------------------
     function addMCDUToolbarButton() {
         if (document.getElementById("mcdu-toolbar-button")) return;
-        let buttonDiv = document.createElement("div");
-        buttonDiv.innerHTML = `<button class="mdl-button mdl-js-button geofs-f-standard-ui geofs-mediumScreenOnly" 
-            data-toggle-panel=".geofs-livery-list" 
-            data-tooltip-classname="mdl-tooltip--top" 
-            tabindex="0" 
-            id="mcdu-toolbar-button" 
-            size="50%">MCDU</button>`;
-        let inserted = false;
-        let bottomUI;
-        let retryCount = 0;
-        function tryInsert() {
-            bottomUI = document.getElementsByClassName("geofs-ui-bottom")[0];
-            if (bottomUI) {
-                let element = buttonDiv.firstElementChild;
-                if (typeof geofs !== "undefined" && geofs.version >= 3.6) {
-                    bottomUI.insertBefore(element, bottomUI.children[5] || null);
-                } else {
-                    bottomUI.insertBefore(element, bottomUI.children[4] || null);
-                }
-                element.onclick = function() {
-                    if (mcduPanelOpen) closeMCDUPanel();
-                    else openMCDUPanel();
-                };
-                inserted = true;
-            } else if (retryCount < 30) {
-                retryCount++;
-                setTimeout(tryInsert, 300);
-            }
+let buttonDiv = document.createElement("div");
+buttonDiv.innerHTML = `
+  <button class="mdl-button mdl-js-button geofs-f-standard-ui geofs-mediumScreenOnly"
+    data-tooltip-classname="mdl-tooltip--top"
+    tabindex="0"
+    id="mcdu-toolbar-button"
+    size="50%">
+    MCDU
+  </button>`;
+
+let inserted = false;
+let bottomUI;
+let retryCount = 0;
+
+function tryInsert() {
+    // 避免重复插入按钮
+    if (document.getElementById("mcdu-toolbar-button")) return;
+
+    bottomUI = document.getElementsByClassName("geofs-ui-bottom")[0];
+    if (bottomUI) {
+        let element = buttonDiv.firstElementChild;
+        if (typeof geofs !== "undefined" && geofs.version >= 3.6) {
+            bottomUI.insertBefore(element, bottomUI.children[5] || null);
+        } else {
+            bottomUI.insertBefore(element, bottomUI.children[4] || null);
         }
-        tryInsert();
+
+        // 修改点击逻辑，控制 MCDU 面板显示/隐藏
+        element.onclick = function () {
+            const panel = document.getElementById("mcdu-panel");
+            if (panel) {
+                panel.style.display = (panel.style.display === "none") ? "block" : "none";
+            } else {
+                openMCDUPanel(); // 创建并打开 MCDU 面板
+            }
+        };
+
+        inserted = true;
+    } else if (retryCount < 30) {
+        retryCount++;
+        setTimeout(tryInsert, 300);
+    }
+}
+tryInsert();
+
     }
 
     function ready(fn) {
