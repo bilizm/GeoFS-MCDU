@@ -505,7 +505,7 @@
                 cursor: pointer;
                 position: absolute;
                 left: 0;
-                bottom: 0;
+                bottom: 25px;
                 background: none;
                 border: none;
                 font-size: 15px;
