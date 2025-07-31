@@ -1,15 +1,36 @@
 // ==UserScript==
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
-// @version      0.1.5
+// @version      1.1
 // @description  Please read the instructions on GitHub before use!
 // @author       開飛機のzm
 // @LICENSE      MIT
-// @match        https://www.geo-fs.com/*
+// @match        *://www.geo-fs.com/*
 // @grant        none
 // ==/UserScript==
 
 (function () {
+    // username
+    let mcduUsername = "NONE";
+    setTimeout(() => {
+        const userEl = document.querySelector(".geofs-callsign");
+        if (userEl) {
+            const childNodes = [...userEl.childNodes];
+            const textOnly = childNodes
+                .filter(node => node.nodeType === Node.TEXT_NODE)
+                .map(node => node.textContent.trim())
+                .join(" ")
+                .replace(/\s+/g, " ")
+                .replace(/no_account/gi, "")
+                .replace(/account_circle/gi, "")
+                .trim();
+
+            if (textOnly) {
+                mcduUsername = textOnly;
+            }
+        }
+    }, 2000);
+
     'use strict';
 
     // ------------------------------- MCDU状态变量 -------------------------------
@@ -148,13 +169,22 @@
 
     function mcduRenderPage(screenMain, screenInput) {
         if (currentSection === 'menu') {
-            screenMain.innerHTML = `<div style='text-align:center;color:white;font-weight:bold;margin-bottom:10px'>GEOFS MCDU</div>
-            <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
-            <div style='text-align:center;color:cyan'>Thanks for using it!</div>
-            <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
-            <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>0.1.5</span></div>
-            <div style='text-align:center'><a href='https://discord.gg/Wsk9zC2kMf' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a></div>`;
-        }
+            screenMain.innerHTML = `
+               <div style='text-align:center;color:white;font-weight:bold;margin-bottom:10px'>GEOFS MCDU</div>
+               <div style='position:absolute; top:5px; right:10px; color:white; font-size:12px;'>USER: ${mcduUsername}</div>
+               <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
+               <div style='text-align:center;color:cyan'>Thanks for using it!</div>
+               <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
+               <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.1</span></div>
+               <div style='text-align:center'>
+                   <a href='https://discord.gg/Wsk9zC2kMf' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a>
+               </div>
+               <div style='margin-top: 10px; text-align: left;'>
+                   <button id='mcdu-export-btn' style='padding: 3px 8px; font-size: 12px; background-color: #222; color: lime; border: 1px solid #444; border-radius: 4px; cursor: pointer;'>EXPORT FPL</button>
+               </div>
+            `;
+       }     
+
         else if (currentSection === 'INIT') {
             screenMain.innerHTML = `<div style='text-align:center;color:white'>INIT A</div>
             <div data-field='coRte'><span style='color:white'>CO RTE</span> <span style='color:orange'>${initFields.coRte}</span></div>
@@ -382,6 +412,77 @@
 
         screenInput.textContent = showError ? "ERROR" : inputBuffer;
         screenInput.style.color = showError ? 'red' : 'cyan';
+        const exportBtn = document.getElementById("mcdu-export-btn");
+        if (exportBtn) {
+            exportBtn.onclick = () => {
+                if (!confirm("Exporting a flight plan\n\nPlease make sure you have completed the flight.\n\nDo you want to continue?")) return;
+
+                const getOrNV = (val) => {
+                    if (!val) return 'N/V';
+                    const s = val.toString().trim();
+                    if (s === "" || s.includes("[") || s.includes("]") || s.includes("---")) return "N/V";
+                    return s;
+                };
+
+                const lines = [];
+                lines.push("=== FLIGHT PLAN EXPORT ===");
+                lines.push(`USER:           ${mcduUsername}`);
+                lines.push(`FLIGHT NO:      ${getOrNV(initFields.fltNbr)}`);
+                lines.push(`FROM/TO:        ${getOrNV(initFields.fromTo)}`);
+                lines.push(`ALTN:           ${getOrNV(initFields.altn)}`);
+                lines.push(`COST INDEX:     ${getOrNV(initFields.costIndex)}`);
+                lines.push(`CRZ FL/TEMP:    ${getOrNV(initFields.crzFl)}`);
+                lines.push("");
+                lines.push("[TAKE OFF]");
+                const take = perfData["TAKE OFF"];
+                lines.push(`V1/VR/V2:       ${getOrNV(take.V1)}/${getOrNV(take.VR)}/${getOrNV(take.V2)}`);
+                lines.push(`TRANS ALT:      ${getOrNV(take.TRANSALT)}`);
+                lines.push(`FLAPS:          ${getOrNV(take.FLAPS)}`);
+                lines.push(`TO TEMP:        ${getOrNV(take.TOTEMP)}`);
+                lines.push("");
+                lines.push("[CLIMB]");
+                const clb = perfData["CLB"];
+                lines.push(`COST INDEX:     ${getOrNV(clb.COSTINDEX)}`);
+                lines.push(`CLB WIND:       ${getOrNV(clb.CLBWIND)}`);
+                lines.push(`TRIP WIND:      ${getOrNV(clb.TRIPWIND)}`);
+                lines.push(`ECON CLB SPD:   ${getOrNV(clb.ECONCLBSPD)}`);
+                lines.push(`STEP ALTS:      ${getOrNV(clb.STEPALTS)}`);
+                lines.push("");
+                lines.push("[CRUISE]");
+                const crz = perfData["CRZ"];
+                lines.push(`CRZ FL:         ${getOrNV(crz.CRZFL)}`);
+                lines.push(`OPT FL:         ${getOrNV(crz.OPTFL)}`);
+                lines.push(`ECON SPD:       ${getOrNV(crz.ECONCRZSPD)}`);
+                lines.push(`WIND:           ${getOrNV(crz.WIND)}`);
+                lines.push(`T/D PRED:       ${getOrNV(crz.TDPRED)}`);
+                lines.push("");
+                lines.push("[DESCENT]");
+                const des = perfData["DES"];
+                lines.push(`DES WIND:       ${getOrNV(des.DESWIND)}`);
+                lines.push(`ECON SPD:       ${getOrNV(des.ECONDESSPD)}`);
+                lines.push(`MAN SPD:        ${getOrNV(des.MANDESSPD)}`);
+                lines.push(`DECEL POINT:    ${getOrNV(des.DECELPT)}`);
+                lines.push(`APPROACH SPD:   ${getOrNV(des.APPRSPD)}`);
+                lines.push("");
+                lines.push("[WAYPOINTS]");
+                if (fplnWaypoints.length === 0) {
+                    lines.push("N/V");
+                } else {
+                    fplnWaypoints.forEach((w, i) => {
+                        lines.push(`${i + 1}. ${w.name || 'N/V'}`);
+                    });
+                }
+
+                const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = "GeoFS_Flight_Plan.txt";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+        }
+
 
         // F-PLN subpages
         if (currentSection === 'F-PLN') {
