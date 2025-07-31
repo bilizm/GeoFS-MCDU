@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      1.1
 // @description  Please read the instructions on GitHub before use!
-// @author       開飛機のzm
+// @author       zm
 // @LICENSE      MIT
 // @match        *://www.geo-fs.com/*
 // @grant        none
