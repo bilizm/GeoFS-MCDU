@@ -353,7 +353,7 @@
 
             function renderRadNav() {
                 const navFreqEl = document.querySelector("input[name='NAVFrequency']");
-                const navFreq = navFreqEl?.value || "N/V";
+                const navFreq = navFreqEl?.value || "N/A";
                 const isValidFreq = /^\d{3}\.\d{2}$/.test(navFreq) && parseFloat(navFreq) >= 108.0 && parseFloat(navFreq) <= 117.95;
 
                 // 默认显示为 ------
@@ -375,13 +375,14 @@
                 screenMain.innerHTML = `
                     <div style='text-align:center;color:white;font-weight:bold;'>RAD NAV</div>
                     <div style='color:white;'>
-                        VOR1: <span style='color:${isValidFreq ? "cyan" : "orange"}'>${isValidFreq ? navFreq + "/" + courseStr : "N/V"}</span>
+                        VOR1: <span style='color:${isValidFreq ? "cyan" : "orange"}'>${isValidFreq ? navFreq + "/" + courseStr : "N/A"}</span>
                     </div>
                     <div style='color:white;'>
-                        VOR2: <span style='color:${isValidFreq ? "cyan" : "orange"}'>${isValidFreq ? "AUTO" : "N/V"}</span>
+                        VOR2: <span style='color:${isValidFreq ? "cyan" : "orange"}'>${isValidFreq ? "AUTO" : "N/A"}</span>
                     </div>
                     <div style='color:white;'>
-                        ILS:  <span style='color:${isValidFreq ? "cyan" : "orange"}'>N/V</span>
+                        ILS:  <span style='color:${isValidFreq ? "cyan" : "orange"}'>N/A
+                        </span>
                     </div>
                     <div style='text-align:right;color:white'>RAD NAV PAGE</div>
                 `;
@@ -430,9 +431,9 @@
                 if (!confirm("Exporting a flight plan\n\nPlease make sure you have completed the flight.\n\nDo you want to continue?")) return;
 
                 const getOrNV = (val) => {
-                    if (!val) return 'N/V';
+                    if (!val) return 'N/A';
                     const s = val.toString().trim();
-                    if (s === "" || s.includes("[") || s.includes("]") || s.includes("---")) return "N/V";
+                    if (s === "" || s.includes("[") || s.includes("]") || s.includes("---")) return "N/A";
                     return s;
                 };
 
@@ -478,10 +479,10 @@
                 lines.push("");
                 lines.push("[WAYPOINTS]");
                 if (fplnWaypoints.length === 0) {
-                    lines.push("N/V");
+                    lines.push("N/A");
                 } else {
                     fplnWaypoints.forEach((w, i) => {
-                        lines.push(`${i + 1}. ${w.name || 'N/V'}`);
+                        lines.push(`${i + 1}. ${w.name || 'N/A'}`);
                     });
                 }
 
