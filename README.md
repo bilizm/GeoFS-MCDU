@@ -47,6 +47,7 @@ Use the virtual keyboard to fill in the information in the input box in the lowe
 - **Delete Characters**: Use the "DEL" button
 - **Switch Pages**: Use the top function buttons (INIT, F-PLN, PROG, etc.)
 - **To enter a negative number**: First enter the number in the input box, then click the +/- key to make it negative. (For example, to enter -5, first click 5 and then click +/-. Click +/-again to make it 5)
+- **Export flight data**: At the end of the flight, you can export your flight data on the MCDU MENU page
 - **Flight Planning Websites**: I recommend using [SimBrief](https://dispatch.simbrief.com/home) or [Flight Planner](https://flightplandatabase.com/planner)
 
 ## Page Functions Explained
@@ -221,8 +222,7 @@ Interactive checklist system (10 phases):
 1. V1 callout will automatically play when aircraft reaches V1 knots
 2. Some features are still under development (marked in interface)
 3. For best experience, complete INIT page and import routes before F-PLN
-4. At the end of the flight, you can export your flight data on the MCDU MENU page
-5. Join our [Discord group](https://discord.gg/Wsk9zC2kMf) for support
+4. Join our [Discord group](https://discord.gg/Wsk9zC2kMf) for support
 
 
 ---
