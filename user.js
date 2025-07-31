@@ -170,7 +170,7 @@
     function mcduRenderPage(screenMain, screenInput) {
         if (currentSection === 'menu') {
             screenMain.innerHTML = `
-               <div style='text-align:center;color:white;font-weight:bold;margin-bottom:10px'>GEOFS MCDU</div>
+               <div style='text-align:center;color:white;font-weight:bold;margin-bottom:10px'>GeoFS MCDU</div>
                <div style="
                    position: absolute;
                   top: 5px;
