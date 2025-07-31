@@ -22,7 +22,8 @@ The GeoFS MCDU add-on is a multifunctional Control Display Unit (MCDU) simulator
 
 **This add-on is based on a simplified version of the A320 MCDU and all aircraft in GeoFS can use this add-on, there may be some unprofessional places.**
 
-<img width="696" height="736" alt="image" src="https://github.com/user-attachments/assets/ac5ffec8-96e5-432b-8b2b-9bbc1f42428d" />
+<img width="639" height="736" alt="image" src="https://github.com/user-attachments/assets/4412d559-b00b-465d-8730-1c76774ffb55" />
+
 
 
 
@@ -220,7 +221,8 @@ Interactive checklist system (10 phases):
 1. V1 callout will automatically play when aircraft reaches V1 knots
 2. Some features are still under development (marked in interface)
 3. For best experience, complete INIT page and import routes before F-PLN
-4. Join our [Discord group](https://discord.gg/Wsk9zC2kMf) for support
+4. At the end of the flight, you can export your flight data on the MCDU MENU page
+5. Join our [Discord group](https://discord.gg/Wsk9zC2kMf) for support
 
 
 ---
