@@ -228,5 +228,4 @@ Interactive checklist system (10 phases):
 ---
 
 - This add-on is based on the A320 MCDU and has no significant relevance to GeoFS itself. All operations are additional, but they ensure professional operation.
-- For some reasons, it cannot be integrated with Flight Plan at this time.
 - Other pages will be improved in the future.
