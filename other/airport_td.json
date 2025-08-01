@@ -1,1 +1,50 @@
-
+{
+    "RJAA": {
+        "name": "NARITA INTERNATIONAL",
+        "lat": 35.7647,
+        "lon": 140.3864,
+        "elevation": 43
+    },
+    "ZBAA": {
+        "name": "BEIJING CAPITAL INTERNATIONAL",
+        "lat": 40.0801,
+        "lon": 116.5846,
+        "elevation": 116
+    },
+    "VHHH": {
+        "name": "HONG KONG INTERNATIONAL",
+        "lat": 22.308,
+        "lon": 113.9185,
+        "elevation": 9
+    },
+    "WSSS": {
+        "name": "SINGAPORE CHANGI",
+        "lat": 1.3644,
+        "lon": 103.9915,
+        "elevation": 7
+    },
+    "RJTT": {
+        "name": "TOKYO HANEDA",
+        "lat": 35.5494,
+        "lon": 139.7798,
+        "elevation": 6
+    },
+    "VIDP": {
+        "name": "INDIRA GANDHI INTERNATIONAL",
+        "lat": 28.5562,
+        "lon": 77.1000,
+        "elevation": 237
+    },
+    "RKSI": {
+        "name": "INCHEON INTERNATIONAL",
+        "lat": 37.4602,
+        "lon": 126.4407,
+        "elevation": 7
+    },
+    "OMDB": {
+        "name": "DUBAI INTERNATIONAL",
+        "lat": 25.2532,
+        "lon": 55.3657,
+        "elevation": 62
+    }
+}
