@@ -1017,13 +1017,13 @@ function tryInsert() {
             bottomUI.insertBefore(element, bottomUI.children[4] || null);
         }
 
-        // 修改点击逻辑，控制 MCDU 面板显示/隐藏
+        // UI
         element.onclick = function () {
             const panel = document.getElementById("mcdu-panel");
             if (panel) {
                 panel.style.display = (panel.style.display === "none") ? "block" : "none";
             } else {
-                openMCDUPanel(); // 创建并打开 MCDU 面板
+                openMCDUPanel(); 
             }
         };
 
