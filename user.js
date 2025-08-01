@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.1.1
 // @description  Please read the instructions on GitHub before use!
 // @author       zm
 // @LICENSE      MIT
@@ -11,25 +11,43 @@
 
 (function () {
     // username
-    let mcduUsername = "NONE";
-    setTimeout(() => {
-        const userEl = document.querySelector(".geofs-callsign");
-        if (userEl) {
-            const childNodes = [...userEl.childNodes];
-            const textOnly = childNodes
-                .filter(node => node.nodeType === Node.TEXT_NODE)
-                .map(node => node.textContent.trim())
-                .join(" ")
-                .replace(/\s+/g, " ")
-                .replace(/no_account/gi, "")
-                .replace(/account_circle/gi, "")
-                .trim();
+    let mcduUsername = "Foo"; 
 
-            if (textOnly) {
-                mcduUsername = textOnly;
+    function getUsernameFallback(retries = 20, interval = 500) {
+        const tryGet = () => {
+            const userEl = document.querySelector(".geofs-callsign");
+            if (userEl) {
+                const childNodes = [...userEl.childNodes];
+                const textOnly = childNodes
+                    .filter(node => node.nodeType === Node.TEXT_NODE)
+                    .map(node => node.textContent.trim())
+                    .join(" ")
+                    .replace(/\s+/g, " ")
+                    .replace(/no_account|account_circle/gi, "")
+                    .trim();
+
+                if (textOnly && textOnly.toLowerCase() !== "foo") {
+                    mcduUsername = textOnly;
+                    return;
+                }
             }
+            if (retries > 0) {
+                setTimeout(() => tryGet(), interval);
+            }
+        };
+        tryGet();
+    }
+
+    function initUsername() {
+        if (window.geofs?.user?.username) {
+            mcduUsername = geofs.user.username;
+        } else {
+            getUsernameFallback();
         }
-    }, 2000);
+    }
+
+    initUsername();
+
 
     'use strict';
 
@@ -58,7 +76,7 @@
         { title: "BEFORE DESCEND", items: ["FMC DATA PANEL...CHECK", "PERF-DES...IMPORT"] },
         { title: "APPROACH", items: ["FLAPS...DOWN", "GEAR...DOWN", "SPOILER...READY", "PERF-APPR...IMPORT"] },
         { title: "AFTER LANDING", items: ["REVERSE THRUST...OFF", "FLAPS...RETRACT", "SPOILER...OFF"] },
-        { title: "AIRCRAFT SHUTDOWN", items: ["BRAKE...OPEN", "ENGINES...CLOSE", "DOORS...OPEN", "DO YOU HAVE A NICE FLIGHT...YES!"] }
+        { title: "AIRCRAFT SHUTDOWN", items: ["BRAKE...OPEN", "ENGINES...CLOSE", "DOORS...OPEN", "FLIGHT DATA...EXPORT"] }
     ];
     let checklistState = Array(checklistPages.length).fill().map((_, pageIdx) => checklistPages[pageIdx].items.map(() => false));
     let currentChecklistPage = 0;
@@ -187,7 +205,7 @@
                <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
                <div style='text-align:center;color:cyan'>Have a nice flight!</div>
                <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
-               <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.1</span></div>
+               <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.1.1</span></div>
                <div style='text-align:center'>
                    <a href='https://discord.gg/Wsk9zC2kMf' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a>
                </div>
