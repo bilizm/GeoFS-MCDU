@@ -227,5 +227,5 @@ Interactive checklist system (10 phases):
 
 ---
 
-- This add-on is based on the A320 MCDU and has no significant relevance to GeoFS itself. All operations are additional, but they ensure professional operation.
+- This add-on is based on the Airbus 320 MCDU and has no significant relevance to GeoFS itself. All operations are additional, but they ensure professional operation.
 - Other pages will be improved in the future.
