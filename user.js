@@ -211,9 +211,9 @@
                ">
                    USER: ${mcduUsername}
                </div>
-               <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
                <div style='text-align:center;color:cyan'>Have a nice flight!</div>
                <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
+               <div style='text-align:center;color:white'>DATE: <span style='color:lime'>${new Date().toISOString().split('T')[0]}</span></div>
                <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.1.2</span></div>
                <div style='text-align:center'>
                    <a href='https://discord.gg/Wsk9zC2kMf' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a>
@@ -476,6 +476,7 @@ else if (currentSection === 'CHECK\nLIST') {
                 const lines = [];
                 lines.push("=== FLIGHT PLAN EXPORT ===");
                 lines.push(`USER:           ${mcduUsername}`);
+                lines.push(`DATE:          ${new Date().toISOString().split('T')[0]}`);
                 lines.push(`FLIGHT NO:      ${getOrNV(initFields.fltNbr)}`);
                 lines.push(`FROM/TO:        ${getOrNV(initFields.fromTo)}`);
                 lines.push(`ALTN:           ${getOrNV(initFields.altn)}`);
