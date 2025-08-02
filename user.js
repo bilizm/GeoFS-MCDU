@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
-// @version      1.1.1
+// @version      1.1.2
 // @description  Please read the instructions on GitHub before use!
 // @author       zm
 // @LICENSE      MIT
@@ -63,6 +63,15 @@
     function playV1Audio() {
         if (!v1Audio) v1Audio = new Audio(V1_AUDIO_URL);
         v1Audio.play();
+    }
+
+    // 点击音效
+    let clickAudio = null;
+    const CLICK_AUDIO_URL = "https://raw.githubusercontent.com/bilizm/GeoFS-MCDU/main/other/click_sound.WAV";
+    function playClickAudio() {
+        if (!clickAudio) clickAudio = new Audio(CLICK_AUDIO_URL);
+        else clickAudio.currentTime = 0;
+        clickAudio.play();
     }
 
     // checklist
@@ -205,7 +214,7 @@
                <div style='text-align:center;color:cyan'>Applicable to all aircrafts!</div>
                <div style='text-align:center;color:cyan'>Have a nice flight!</div>
                <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
-               <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.1.1</span></div>
+               <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.1.2</span></div>
                <div style='text-align:center'>
                    <a href='https://discord.gg/Wsk9zC2kMf' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a>
                </div>
@@ -420,26 +429,35 @@
 }
 
 
-        // CHECKLIST
-        else if (currentSection === 'CHECK\nLIST') {
-            const page = checklistPages[currentChecklistPage];
-            screenMain.innerHTML = `<div class="mcdu-checklist-title">${page.title}</div>`;
-            page.items.forEach((item, idx) => {
-                screenMain.innerHTML += `
-                    <div class="mcdu-checklist-item" data-idx="${idx}" style="user-select:none;">
-                        <span>${item.toUpperCase()}</span>
-                        <span class="mcdu-checklist-box${checklistState[currentChecklistPage][idx] ? " checked":""}" style="margin-left:8px;">
-                            ${checklistState[currentChecklistPage][idx] ? '<span class="mcdu-checkmark">&#10003;</span>' : ''}
-                        </span>
-                    </div>
-                `;
-            });
-            const nextPage = (currentChecklistPage + 1) % checklistPages.length;
-            const nextTitle = checklistPages[nextPage].title.toUpperCase();
-            screenMain.innerHTML += `<div style="text-align:right;color:#00FF00;font-size:14px;">
-                ${currentChecklistPage+1}/10 → ${nextTitle}
-            </div>`;
-        }
+// CHECKLIST
+else if (currentSection === 'CHECK\nLIST') {
+    const page = checklistPages[currentChecklistPage];
+    screenMain.innerHTML = `<div class="mcdu-checklist-title">${page.title}</div>`;
+    page.items.forEach((item, idx) => {
+        screenMain.innerHTML += `
+            <div class="mcdu-checklist-item" data-idx="${idx}" style="user-select:none;">
+                <span>${item.toUpperCase()}</span>
+                <span class="mcdu-checklist-box${checklistState[currentChecklistPage][idx] ? " checked":""}" style="margin-left:8px;">
+                    ${checklistState[currentChecklistPage][idx] ? '<span class="mcdu-checkmark">&#10003;</span>' : ''}
+                </span>
+            </div>
+        `;
+    });
+    const nextPage = (currentChecklistPage + 1) % checklistPages.length;
+    const nextTitle = checklistPages[nextPage].title.toUpperCase();
+    screenMain.innerHTML += `<div style="text-align:right;color:#00FF00;font-size:14px;">
+        ${currentChecklistPage+1}/10 → ${nextTitle}
+    </div>`;
+
+    // 修复：每次渲染后给每个检查项绑定点击事件
+    screenMain.querySelectorAll('.mcdu-checklist-item').forEach(item => {
+        item.onclick = function () {
+            const idx = parseInt(item.getAttribute('data-idx'), 10);
+            checklistState[currentChecklistPage][idx] = !checklistState[currentChecklistPage][idx];
+            mcduRenderPage(screenMain, screenInput);
+        };
+    });
+}
 
         screenInput.textContent = showError ? "ERROR" : inputBuffer;
         screenInput.style.color = showError ? 'red' : 'cyan';
@@ -731,31 +749,33 @@
 
         const grid = document.createElement('div');
         grid.className = 'mcdu-grid';
+
+        // 按钮布局，ABCDE向右移动一格，FGHIJ向右移动一格
         const layout = [
             ["DIR", "PROG", "PREF", "INIT", "DATA", "DIM BRT", "", ""],
             ["F-PLN", "RAD\nNAV", "FUFL\nPRED", "SEC\nF-PLN", "CHECK\nLIST", "MCDU\nMENU", "", ""],
             ["AIR\nPORT", "", "", "", "", "", "", ""],
-            ["←", "↑", "A", "B", "C", "D", "E", ""],
-            ["→", "↓", "F", "G", "H", "I", "J", ""],
+            ["←", "↑", "", "A", "B", "C", "D", "E"],
+            ["→", "↓", "", "F", "G", "H", "I", "J"],
             ["1", "2", "3", "K", "L", "M", "N", "O"],
             ["4", "5", "6", "P", "Q", "R", "S", "T"],
             ["7", "8", "9", "U", "V", "W", "X", "Y"],
             [".", "0", "+/-", "Z", "SP", "DEL", "/", "CLR"]
         ];
-        layout.forEach(row => {
-            row.forEach(label => {
+        layout.forEach((row, rowIdx) => {
+            row.forEach((label, colIdx) => {
                 const btn = document.createElement('div');
                 btn.className = 'mcdu-btn';
                 if (!label || label === "") btn.classList.add('blank');
                 else {
                     btn.textContent = label;
                     btn.onclick = () => {
+                        playClickAudio(); // 播放点击音
                         showError = false;
                         if (label === "CLR") inputBuffer = "";
                         else if (label === "DEL") {
                            inputBuffer = inputBuffer.slice(0, -1);
                         }
-
                         else if (label === "SP") inputBuffer += " ";
                         else if (label === "+/-") {
                             if (/^\d+$/.test(inputBuffer)) inputBuffer = '-' + inputBuffer;
@@ -803,7 +823,6 @@
                             }
                             if (label === 'CHECK\nLIST') currentChecklistPage = 0;
                         }
-
                         else if (!sectionNames.includes(label)) inputBuffer += label.replace("\n", "");
                         mcduRenderPage(screenMain, screenInput);
                     };
