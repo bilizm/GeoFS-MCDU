@@ -162,7 +162,8 @@ Performance calculation pages (use "←" and "→" to switch):
 
 The first time you click it to enter the page, three N/A will be displayed.
 
-<img width="640" height="234" alt="3FSZJ0~5 S (P}S9MU_69}H" src="https://github.com/user-attachments/assets/e40378b2-2510-4bea-b260-acc74811595c" />
+<img width="507" height="170" alt="屏幕截图 2025-10-05 102657" src="https://github.com/user-attachments/assets/9e0fbe4b-ebf6-4897-82f8-501730226879" />
+
 
 When you click on the corresponding frequency of the runway.
 
@@ -170,7 +171,8 @@ When you click on the corresponding frequency of the runway.
 
 Then it will display the corresponding runway frequency you just clicked. (The ILS cannot obtain information)
 
-<img width="640" height="233" alt="image" src="https://github.com/user-attachments/assets/27412ee7-70b7-4284-8362-9efc71ab0425" />
+
+<img width="500" height="174" alt="屏幕截图 2025-10-05 102712" src="https://github.com/user-attachments/assets/b6f57cf4-bafb-4f0e-a508-d94186cd459c" />
 
 
 
