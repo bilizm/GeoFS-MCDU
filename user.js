@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
-// @version      1.1.2
-// @description  Please read the instructions on GitHub before use!
+// @version      1.2
+// @description  Please read the instructions on GitHub before use! 1.3:You can use your computer keyboard to enter information! Only letters and numbers are supported.
 // @author       zm
 // @LICENSE      MIT
 // @match        *://www.geo-fs.com/*
@@ -53,6 +53,7 @@
 
     // ------------------------------- MCDU状态变量 -------------------------------
     let mcduPanelOpen = false;
+    let mcduLocked = false;
     let mcduPanel = null;
 
     // ------------------------------- MCDU页面与功能原始代码 -------------------------------
@@ -214,7 +215,7 @@
                <div style='text-align:center;color:cyan'>Have a nice flight!</div>
                <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
                <div style='text-align:center;color:white'>DATE: <span style='color:lime'>${new Date().toISOString().split('T')[0]}</span></div>
-               <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.1.2</span></div>
+               <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.3</span></div>
                <div style='text-align:center'>
                    <a href='https://discord.gg/Wsk9zC2kMf' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a>
                </div>
@@ -581,6 +582,7 @@ else if (currentSection === 'CHECK\nLIST') {
     }
 
     function openMCDUPanel() {
+        mcduLocked = true;
         if (mcduPanelOpen) return;
         mcduPanelOpen = true;
 
@@ -771,6 +773,7 @@ else if (currentSection === 'CHECK\nLIST') {
                 else {
                     btn.textContent = label;
                     btn.onclick = () => {
+                        if (!mcduPanelOpen) return;
                         playClickAudio(); // 播放点击音
                         showError = false;
                         if (label === "CLR") inputBuffer = "";
@@ -993,9 +996,47 @@ else if (currentSection === 'CHECK\nLIST') {
         }, 500);
 
         mcduRenderPage(screenMain, screenInput);
+// ----------------- 键盘输入 -----------------
+document.addEventListener("keydown", function (e) {
+    // 如果 MCDU 面板没开，直接不处理，允许 GeoFS 快捷键生效
+    if (!mcduPanelOpen) return; 
+
+    // 下面只会在 MCDU 面板打开时执行
+    // 阻止 GeoFS 捕获快捷键（字母/数字）
+    if (/^[a-zA-Z0-9]$/.test(e.key)) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        inputBuffer += e.key.toUpperCase();
+        showError = false;
+        playClickAudio();
+        mcduRenderPage(
+            document.getElementById('mcdu-display-main'),
+            document.getElementById('mcdu-display-input')
+        );
+        return;
+    }
+
+    // Backspace 逻辑
+    if (e.key === "Backspace") {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        if (inputBuffer.length > 0) {
+            inputBuffer = inputBuffer.slice(0, -1); 
+            showError = false;
+            playClickAudio();
+            mcduRenderPage(
+                document.getElementById('mcdu-display-main'),
+                document.getElementById('mcdu-display-input')
+            );
+        }
+        return;
+    }
+}, true); // 捕获阶段！！注意要加 true
+
     }
 
     function closeMCDUPanel() {
+        mcduLocked = false;
         if (!mcduPanelOpen) return;
         mcduPanelOpen = false;
         if (mcduPanel) {
