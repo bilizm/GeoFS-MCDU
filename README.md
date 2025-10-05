@@ -54,7 +54,7 @@ Use the virtual keyboard to fill in the information in the input box in the lowe
 
 ### INIT Page
 
-* Currently only INIT A.*
+*Currently only INIT A.*
 
 
 <img width="937" height="313" alt="6IBD4~CTDNXOF7C4C08NZ~J" src="https://github.com/user-attachments/assets/b946daaf-7e1b-47b6-af51-eb93d4a85d55" />
