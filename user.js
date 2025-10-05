@@ -998,11 +998,11 @@ else if (currentSection === 'CHECK\nLIST') {
         mcduRenderPage(screenMain, screenInput);
 // ----------------- 键盘输入 -----------------
 document.addEventListener("keydown", function (e) {
-    // 如果 MCDU 面板没开，直接不处理，允许 GeoFS 快捷键生效
+    // GeoFS 快捷键
     if (!mcduPanelOpen) return; 
 
-    // 下面只会在 MCDU 面板打开时执行
-    // 阻止 GeoFS 捕获快捷键（字母/数字）
+    //  MCDU open
+    // 阻止 GeoFS 快捷键
     if (/^[a-zA-Z0-9]$/.test(e.key)) {
         e.preventDefault();
         e.stopImmediatePropagation();
@@ -1016,7 +1016,7 @@ document.addEventListener("keydown", function (e) {
         return;
     }
 
-    // Backspace 逻辑
+    // Backspace
     if (e.key === "Backspace") {
         e.preventDefault();
         e.stopImmediatePropagation();
@@ -1031,7 +1031,7 @@ document.addEventListener("keydown", function (e) {
         }
         return;
     }
-}, true); // 捕获阶段！！注意要加 true
+}, true); 
 
     }
 
