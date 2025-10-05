@@ -2,7 +2,7 @@
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
 // @version      1.2
-// @description  Please read the instructions on GitHub before use! 1.3:You can use your computer keyboard to enter information! Only letters and numbers are supported.
+// @description  Please read the instructions on GitHub before use! 1.2:You can use your computer keyboard to enter information! Only letters and numbers are supported.
 // @author       zm
 // @LICENSE      MIT
 // @match        *://www.geo-fs.com/*
@@ -215,7 +215,7 @@
                <div style='text-align:center;color:cyan'>Have a nice flight!</div>
                <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
                <div style='text-align:center;color:white'>DATE: <span style='color:lime'>${new Date().toISOString().split('T')[0]}</span></div>
-               <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.3</span></div>
+               <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.2</span></div>
                <div style='text-align:center'>
                    <a href='https://discord.gg/Wsk9zC2kMf' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a>
                </div>
