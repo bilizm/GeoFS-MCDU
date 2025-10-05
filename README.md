@@ -223,7 +223,7 @@ Interactive checklist system (10 phases):
 2. Some features are still under development (marked in interface)
 3. For best experience, complete INIT page and import routes before F-PLN
 4. You can use your computer keyboard to enter information. (Only letters and numbers are supported)
-5. Join our [Discord group](https://discord.gg/Wsk9zC2kMf) for support
+5. Join our [Discord Server](https://discord.gg/Wsk9zC2kMf) for support
 
 
 ---
