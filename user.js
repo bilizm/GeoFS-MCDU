@@ -753,7 +753,7 @@ else if (currentSection === 'CHECK\nLIST') {
         const grid = document.createElement('div');
         grid.className = 'mcdu-grid';
 
-        // 按钮布局，ABCDE向右移动一格，FGHIJ向右移动一格
+        // 按钮布局
         const layout = [
             ["DIR", "PROG", "PREF", "INIT", "DATA", "DIM BRT", "", ""],
             ["F-PLN", "RAD\nNAV", "FUFL\nPRED", "SEC\nF-PLN", "CHECK\nLIST", "MCDU\nMENU", "", ""],
