@@ -217,7 +217,7 @@
                <div style='text-align:center;color:white'>DATE: <span style='color:lime'>${new Date().toISOString().split('T')[0]}</span></div>
                <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.2</span></div>
                <div style='text-align:center'>
-                   <a href='https://discord.gg/Wsk9zC2kMf' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD GROUP</a>
+                   <a href='https://discord.gg/Wsk9zC2kMf' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD SERVER</a>
                </div>
                <div style='margin-top: 10px; text-align: left;'>
                    <button id='mcdu-export-btn' style='padding: 3px 8px; font-size: 12px; background-color: #222; color: lime; border: 1px solid #444; border-radius: 4px; cursor: pointer;'>EXPORT FPL</button>
