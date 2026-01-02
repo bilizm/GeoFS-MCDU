@@ -2,7 +2,7 @@
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
 // @version      1.3
-// @description  Please read the instructions on GitHub before use! 1.3: Keyboard listener improved: only active while MCDU is open, and removed when closed.
+// @description  Please read the instructions on GitHub before use! 1.3:Fixed the bug keyboard listener improved: only active while MCDU is open, and removed when closed.
 // @author       zm
 // @LICENSE      MIT
 // @match        *://www.geo-fs.com/*
