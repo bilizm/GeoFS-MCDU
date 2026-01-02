@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         GeoFS MCDU
 // @namespace    http://tampermonkey.net/
-// @version      1.2
-// @description  Please read the instructions on GitHub before use! 1.2:You can use your computer keyboard to enter information! Only letters and numbers are supported.
+// @version      1.3
+// @description  Please read the instructions on GitHub before use! 1.3: Keyboard listener improved: only active while MCDU is open, and removed when closed.
 // @author       zm
 // @LICENSE      MIT
 // @match        *://www.geo-fs.com/*
@@ -55,6 +55,7 @@
     let mcduPanelOpen = false;
     let mcduLocked = false;
     let mcduPanel = null;
+    let mcduKeydownHandler = null; // 新：键盘事件处理器引用，便于添加/移除
 
     // ------------------------------- MCDU页面与功能原始代码 -------------------------------
     // V1 sound
@@ -215,7 +216,7 @@
                <div style='text-align:center;color:cyan'>Have a nice flight!</div>
                <div style='text-align:center;color:white'>AUTHOR: <span style='color:lime'>zm</span></div>
                <div style='text-align:center;color:white'>DATE: <span style='color:lime'>${new Date().toISOString().split('T')[0]}</span></div>
-               <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.2</span></div>
+               <div style='text-align:center;color:white'>VERSION: <span style='color:lime'>1.3</span></div>
                <div style='text-align:center'>
                    <a href='https://discord.gg/Wsk9zC2kMf' target='_blank' style='color:deepskyblue;text-decoration:underline;cursor:pointer'>JOIN OUR DISCORD SERVER</a>
                </div>
@@ -996,48 +997,51 @@ else if (currentSection === 'CHECK\nLIST') {
         }, 500);
 
         mcduRenderPage(screenMain, screenInput);
-// ----------------- 键盘输入 -----------------
-document.addEventListener("keydown", function (e) {
-    // GeoFS 快捷键
-    if (!mcduPanelOpen) return; 
 
-    //  MCDU open
-    // 阻止 GeoFS 快捷键
-    if (/^[a-zA-Z0-9]$/.test(e.key)) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        inputBuffer += e.key.toUpperCase();
-        showError = false;
-        playClickAudio();
-        mcduRenderPage(
-            document.getElementById('mcdu-display-main'),
-            document.getElementById('mcdu-display-input')
-        );
-        return;
-    }
+        // ----------------- 键盘输入 -----------------
+        // 说明：我们在打开面板时注册键盘处理器引用，关闭面板时移除，确保面板隐藏/关闭时不再接收键盘输入。
+        if (!mcduKeydownHandler) {
+            mcduKeydownHandler = function (e) {
+                // 只有在 MCDU 面板真正处于“打开”状态时才处理按键
+                if (!mcduPanelOpen) return;
 
-    // Backspace
-    if (e.key === "Backspace") {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        if (inputBuffer.length > 0) {
-            inputBuffer = inputBuffer.slice(0, -1); 
-            showError = false;
-            playClickAudio();
-            mcduRenderPage(
-                document.getElementById('mcdu-display-main'),
-                document.getElementById('mcdu-display-input')
-            );
+                // 仅处理普通字母数字键（保留 Backspace）到 MCDU 输入框
+                if (/^[a-zA-Z0-9]$/.test(e.key)) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    inputBuffer += e.key.toUpperCase();
+                    showError = false;
+                    playClickAudio();
+                    mcduRenderPage(
+                        document.getElementById('mcdu-display-main'),
+                        document.getElementById('mcdu-display-input')
+                    );
+                    return;
+                }
+
+                // Backspace
+                if (e.key === "Backspace") {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    if (inputBuffer.length > 0) {
+                        inputBuffer = inputBuffer.slice(0, -1);
+                        showError = false;
+                        playClickAudio();
+                        mcduRenderPage(
+                            document.getElementById('mcdu-display-main'),
+                            document.getElementById('mcdu-display-input')
+                        );
+                    }
+                    return;
+                }
+            };
+            document.addEventListener("keydown", mcduKeydownHandler, true);
         }
-        return;
-    }
-}, true); 
-
     }
 
     function closeMCDUPanel() {
         mcduLocked = false;
-        if (!mcduPanelOpen) return;
+        if (!mcduPanelOpen && !mcduPanel) return;
         mcduPanelOpen = false;
         if (mcduPanel) {
             if (mcduPanel._v1timer) clearInterval(mcduPanel._v1timer);
@@ -1046,6 +1050,14 @@ document.addEventListener("keydown", function (e) {
         }
         const styleEl = document.getElementById('mcdu-panel-style');
         if (styleEl) styleEl.remove();
+
+        // 移除键盘事件处理器，确保关闭后不会再响应键盘输入
+        if (mcduKeydownHandler) {
+            try {
+                document.removeEventListener("keydown", mcduKeydownHandler, true);
+            } catch (err) { /* ignore */ }
+            mcduKeydownHandler = null;
+        }
     }
 
     // -------------------- 工具栏按钮 ---------------------
@@ -1079,12 +1091,15 @@ function tryInsert() {
         }
 
         // UI
+        // 修改：不要直接切换 display，而是通过 openMCDUPanel()/closeMCDUPanel() 来维护状态和事件绑定
         element.onclick = function () {
             const panel = document.getElementById("mcdu-panel");
             if (panel) {
-                panel.style.display = (panel.style.display === "none") ? "block" : "none";
+                // 如果面板存在则关闭（统一调用 closeMCDUPanel，确保事件移除）
+                closeMCDUPanel();
             } else {
-                openMCDUPanel(); 
+                // 面板不存在则打开
+                openMCDUPanel();
             }
         };
 
