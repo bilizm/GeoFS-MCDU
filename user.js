@@ -55,7 +55,7 @@
     let mcduPanelOpen = false;
     let mcduLocked = false;
     let mcduPanel = null;
-    let mcduKeydownHandler = null; // 新：键盘事件处理器引用，便于添加/移除
+    let mcduKeydownHandler = null; 
 
     // ------------------------------- MCDU页面与功能原始代码 -------------------------------
     // V1 sound
@@ -999,7 +999,6 @@ else if (currentSection === 'CHECK\nLIST') {
         mcduRenderPage(screenMain, screenInput);
 
         // ----------------- 键盘输入 -----------------
-        // 说明：我们在打开面板时注册键盘处理器引用，关闭面板时移除，确保面板隐藏/关闭时不再接收键盘输入。
         if (!mcduKeydownHandler) {
             mcduKeydownHandler = function (e) {
                 // 只有在 MCDU 面板真正处于“打开”状态时才处理按键
@@ -1091,11 +1090,10 @@ function tryInsert() {
         }
 
         // UI
-        // 修改：不要直接切换 display，而是通过 openMCDUPanel()/closeMCDUPanel() 来维护状态和事件绑定
         element.onclick = function () {
             const panel = document.getElementById("mcdu-panel");
             if (panel) {
-                // 如果面板存在则关闭（统一调用 closeMCDUPanel，确保事件移除）
+                // 如果面板存在则关闭
                 closeMCDUPanel();
             } else {
                 // 面板不存在则打开
